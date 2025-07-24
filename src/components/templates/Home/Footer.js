@@ -13,7 +13,7 @@ export default function Footer() {
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
                         {/* Logo */}
                         <div className="text-xl flex items-center gap-2">
-                            <Users className="text-emerald-400 w-8 h-8" />
+                            <img src="/images/Group.png" alt="logo" />
                             <div className="text-3xl font-bold">
                                 <span className="text-violet-950">Job</span> - <span className="text-emerald-400">Pulse</span>
                             </div>
