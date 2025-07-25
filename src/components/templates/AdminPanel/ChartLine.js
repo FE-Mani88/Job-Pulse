@@ -1,7 +1,6 @@
 "use client"
 import React, { useMemo, useState } from "react"
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
-
 import {
     Card,
     CardContent,
@@ -14,6 +13,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import { strokeColorMap } from "@/utils/constants"
 
 export const description = "An interactive line chart"
 
@@ -125,7 +125,7 @@ const chartConfig = {
     },
 }
 
-export function ChartLineInteractive() {
+export function ChartLineInteractive({ themeColor }) {
     const [activeChart, setActiveChart] = useState("desktop")
 
     const total = useMemo(() => {
@@ -204,7 +204,7 @@ export function ChartLineInteractive() {
                         <Line
                             dataKey={activeChart}
                             type="monotone"
-                            stroke={`var(--color-${activeChart})`}
+                            stroke={strokeColorMap[themeColor]}
                             strokeWidth={2}
                             dot={false}
                         />

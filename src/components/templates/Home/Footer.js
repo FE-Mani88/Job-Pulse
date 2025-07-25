@@ -6,7 +6,7 @@ import { FaInstagram, FaTelegramPlane, FaLinkedin, FaDiscord } from 'react-icons
 export default function Footer() {
     return (
         <>
-            <footer id='footer' className="bg-gray-100 w-full py-10 mt-18">
+            <footer id='footer' className="bg-gray-100 dark:bg-gray-800 w-full py-10 mt-18">
                 <div className="w-full px-4 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto">
                     
                     {/* Top Row - Logo & Socials */}
@@ -15,7 +15,7 @@ export default function Footer() {
                         <div className="text-xl flex items-center gap-2">
                             <img src="/images/Group.png" alt="logo" />
                             <div className="text-3xl font-bold">
-                                <span className="text-violet-950">Job</span> - <span className="text-emerald-400">Pulse</span>
+                                <span className="text-violet-950 dark:text-emerald-400">Job</span> <span className="text-emerald-400">Pulse</span>
                             </div>
                         </div>
 
@@ -98,8 +98,8 @@ export default function Footer() {
             </footer>
 
             {/* Footer Bottom Bar */}
-            <div className="bg-gray-300 py-3 text-center text-sm md:text-base text-gray-700">
-                Job Pulse, Created By <span className="font-semibold">Dev Mani</span> & <span className="font-semibold">Soroush GH</span>
+            <div className="bg-gray-300 dark:bg-gray-700 py-3 text-center text-sm md:text-base text-gray-700 dark:text-white">
+                Job Pulse, Created By <span className="font-semibold dark:text-green-400">Dev Mani</span> & <span className="font-semibold dark:text-green-400">Soroush GH</span>
             </div>
         </>
     );

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -33,13 +33,28 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
-import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import Link from 'next/link'
 
-export default function Header() {
+export default function Header({ getThemeValueHandler }) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
   const { setTheme } = useTheme()
+  const [themeValue, setThemeValue] = useState(null)
+
+  useEffect(() => {
+    const stored = localStorage.getItem('colorTheme') || 'green'
+    setThemeValue(stored)
+    getThemeValueHandler(themeValue)
+  }, [themeValue])
 
   const frameworks = [
     {
@@ -301,7 +316,47 @@ export default function Header() {
 
         {/* Right Section */}
         <div className='flex gap-2'>
-          <Input type="email" placeholder="Email" />
+          <Select value={themeValue} onValueChange={(value) => {
+            setThemeValue(value)
+            localStorage.setItem('colorTheme', value)
+          }}>
+            <SelectTrigger className="">
+              <SelectValue placeholder="Select a theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Themes</SelectLabel>
+                <SelectItem value="red" className='flex items-center'>
+                  <div
+                    className="w-5 h-5 rotate-30 rounded-full"
+                    style={{ background: "linear-gradient(to right, #F44336 50%, #FF9800 50%)" }}
+                  ></div>
+                  Red & Orange
+                </SelectItem>
+                <SelectItem value="green" className='flex items-center'>
+                  <div
+                    className="w-5 h-5 rotate-30 rounded-full"
+                    style={{ background: "linear-gradient(to right, #76FF03 50%, yellow 50%)" }}
+                  ></div>
+                  Green & Yellow
+                </SelectItem>
+                <SelectItem value="purple" className='flex items-center'>
+                  <div
+                    className="w-5 h-5 rotate-30 rounded-full"
+                    style={{ background: "linear-gradient(to right, #E040FB 50%, #EC407A 50%)" }}
+                  ></div>
+                  Purple & Pink
+                </SelectItem>
+                <SelectItem value="blue" className='flex items-center'>
+                  <div
+                    className="w-5 h-5 rotate-30 rounded-full"
+                    style={{ background: "linear-gradient(to right, #2196F3 50%, #81D4FA 50%)" }}
+                  ></div>
+                  Blue & Sky
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">

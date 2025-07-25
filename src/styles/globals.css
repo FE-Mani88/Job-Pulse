@@ -3,7 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
+/* global theme variables based on data-theme */
+body[data-theme='green'] {
+	--main-color: #22c55e;
+  }
+  body[data-theme='blue'] {
+	--main-color: #3b82f6;
+  }
+  body[data-theme='red'] {
+	--main-color: #ef4444;
+  }
+  body[data-theme='purple'] {
+	--main-color: #8b5cf6;
+  }
+  
 
 @layer base {
 	:root {
@@ -72,7 +85,7 @@ body {
 
 body {
 	--sb-track-color: #202f26;
-	--sb-thumb-color: #54bd89;
+	--sb-thumb-color: #5a5b5a;
 	--sb-size: 4px;
 }
 

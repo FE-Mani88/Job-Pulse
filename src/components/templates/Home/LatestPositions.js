@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 export default function LatestPositions() {
     return (
-        <div className="max-w-6xl mx-auto text-zinc-700 mt-10">
+        <div className="max-w-6xl mx-auto text-zinc-700 dark:text-zinc-200 mt-10">
             <div className="flex justify-between items-center mb-6">
                 <div className="text-3xl flex gap-3 items-center">
                     <div
@@ -38,7 +38,7 @@ export default function LatestPositions() {
                 modules={[FreeMode, Keyboard, Autoplay]}
                 className="w-full h-64"
             >
-                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] flex items-center justify-center rounded-lg text-white text-2xl">
+                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] dark:bg-gray-800/80 flex items-center justify-center rounded-lg text-white text-2xl">
                     <div className="p-3">
                         {/* Top */}
                         <div className="flex items-center gap-4">
@@ -48,9 +48,9 @@ export default function LatestPositions() {
                             </div>
 
                             <div>
-                                <h4 className="text-black">Full Stack Dev</h4>
-                                <p className="text-zinc-500 text-[18px]">Remote / Full Time</p>
-                                <p className="text-zinc-400 text-[16px]">Web Devs Company</p>
+                                <h4 className="text-black dark:text-white">Full Stack Dev</h4>
+                                <p className="text-zinc-500 dark:text-zinc-400 text-[18px]">Remote / Full Time</p>
+                                <p className="text-zinc-400 dark:text-zinc-300 text-[16px]">Web Devs Company</p>
                             </div>
 
                         </div>
@@ -59,7 +59,7 @@ export default function LatestPositions() {
                         <div className="bg-zinc-300 w-[95%] h-[1px] mx-auto mt-1.5"></div>
 
                         <div className="mt-2 flex flex-col gap-2">
-                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
+                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto dark:text-zinc-200">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
 
                             <div className="flex justify-between items-center">
                                 <span className="text-[22px] text-emerald-500">300 - 400$</span>
@@ -69,7 +69,7 @@ export default function LatestPositions() {
 
                     </div>
                 </SwiperSlide>
-                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] flex items-center justify-center rounded-lg text-white text-2xl">
+                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] dark:bg-gray-800/80 flex items-center justify-center rounded-lg text-white text-2xl">
                     <div className="p-3">
                         {/* Top */}
                         <div className="flex items-center gap-4">
@@ -79,9 +79,9 @@ export default function LatestPositions() {
                             </div>
 
                             <div>
-                                <h4 className="text-black">Full Stack Dev</h4>
-                                <p className="text-zinc-500 text-[18px]">Remote / Full Time</p>
-                                <p className="text-zinc-400 text-[16px]">Web Devs Company</p>
+                                <h4 className="text-black dark:text-white">Full Stack Dev</h4>
+                                <p className="text-zinc-500 text-[18px] dark:text-zinc-400">Remote / Full Time</p>
+                                <p className="text-zinc-400 text-[16px] dark:text-zinc-300">Web Devs Company</p>
                             </div>
 
                         </div>
@@ -90,7 +90,7 @@ export default function LatestPositions() {
                         <div className="bg-zinc-300 w-[95%] h-[1px] mx-auto mt-1.5"></div>
 
                         <div className="mt-2 flex flex-col gap-2">
-                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
+                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto dark:text-zinc-200">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
 
                             <div className="flex justify-between items-center">
                                 <span className="text-[22px] text-[#EF5350]">300 - 400$</span>
@@ -100,7 +100,7 @@ export default function LatestPositions() {
 
                     </div>
                 </SwiperSlide>
-                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] flex items-center justify-center rounded-lg text-white text-2xl">
+                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] dark:bg-gray-800/80 flex items-center justify-center rounded-lg text-white text-2xl">
                     <div className="p-3">
                         {/* Top */}
                         <div className="flex items-center gap-4">
@@ -110,9 +110,9 @@ export default function LatestPositions() {
                             </div>
 
                             <div>
-                                <h4 className="text-black">Full Stack Dev</h4>
-                                <p className="text-zinc-500 text-[18px]">Remote / Full Time</p>
-                                <p className="text-zinc-400 text-[16px]">Web Devs Company</p>
+                                <h4 className="text-black dark:text-white">Full Stack Dev</h4>
+                                <p className="text-zinc-500 text-[18px] dark:text-zinc-400">Remote / Full Time</p>
+                                <p className="text-zinc-400 text-[16px] dark:text-zinc-300">Web Devs Company</p>
                             </div>
 
                         </div>
@@ -121,7 +121,7 @@ export default function LatestPositions() {
                         <div className="bg-zinc-300 w-[95%] h-[1px] mx-auto mt-1.5"></div>
 
                         <div className="mt-2 flex flex-col gap-2">
-                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
+                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto dark:text-zinc-200">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
 
                             <div className="flex justify-between items-center">
                                 <span className="text-[22px] text-[#1E88E5]">300 - 400$</span>
@@ -131,7 +131,7 @@ export default function LatestPositions() {
 
                     </div>
                 </SwiperSlide>
-                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] flex items-center justify-center rounded-lg text-white text-2xl">
+                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] dark:bg-gray-800/80 flex items-center justify-center rounded-lg text-white text-2xl">
                     <div className="p-3">
                         {/* Top */}
                         <div className="flex items-center gap-4">
@@ -141,9 +141,9 @@ export default function LatestPositions() {
                             </div>
 
                             <div>
-                                <h4 className="text-black">Full Stack Dev</h4>
-                                <p className="text-zinc-500 text-[18px]">Remote / Full Time</p>
-                                <p className="text-zinc-400 text-[16px]">Web Devs Company</p>
+                                <h4 className="text-black dark:text-white">Full Stack Dev</h4>
+                                <p className="text-zinc-500 text-[18px] dark:text-zinc-400">Remote / Full Time</p>
+                                <p className="text-zinc-400 text-[16px] dark:text-zinc-300">Web Devs Company</p>
                             </div>
 
                         </div>
@@ -152,7 +152,7 @@ export default function LatestPositions() {
                         <div className="bg-zinc-300 w-[95%] h-[1px] mx-auto mt-1.5"></div>
 
                         <div className="mt-2 flex flex-col gap-2">
-                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
+                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto dark:text-zinc-200">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
 
                             <div className="flex justify-between items-center">
                                 <span className="text-[22px] text-[#FDD835]">300 - 400$</span>
@@ -162,7 +162,7 @@ export default function LatestPositions() {
 
                     </div>
                 </SwiperSlide>
-                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] flex items-center justify-center rounded-lg text-white text-2xl">
+                <SwiperSlide className="w-48 h-full bg-[#f6f6f8] dark:bg-gray-800/80 flex items-center justify-center rounded-lg text-white text-2xl">
                     <div className="p-3">
                         {/* Top */}
                         <div className="flex items-center gap-4">
@@ -172,9 +172,9 @@ export default function LatestPositions() {
                             </div>
 
                             <div>
-                                <h4 className="text-black">Full Stack Dev</h4>
-                                <p className="text-zinc-500 text-[18px]">Remote / Full Time</p>
-                                <p className="text-zinc-400 text-[16px]">Web Devs Company</p>
+                                <h4 className="text-black dark:text-white">Full Stack Dev</h4>
+                                <p className="text-zinc-500 text-[18px] dark:text-zinc-400">Remote / Full Time</p>
+                                <p className="text-zinc-400 text-[16px] dark:text-zinc-300">Web Devs Company</p>
                             </div>
 
                         </div>
@@ -183,7 +183,7 @@ export default function LatestPositions() {
                         <div className="bg-zinc-300 w-[95%] h-[1px] mx-auto mt-1.5"></div>
 
                         <div className="mt-2 flex flex-col gap-2">
-                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
+                            <p className="text-[18px] text-zinc-700 w-[98%] mx-auto dark:text-zinc-200">we need a senior full stack web developer in our startup. you can send your resume for joining to our company.</p>
 
                             <div className="flex justify-between items-center">
                                 <span className="text-[22px] text-[#1E88E5]">300 - 400$</span>

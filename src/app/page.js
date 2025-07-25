@@ -9,7 +9,7 @@ import Footer from "@/components/templates/Home/Footer";
 
 export default function Home() {
   return (
-    <>
+    <div className="dark:bg-blue-400/10">
       <Header />
       <Banner />
       <LatestPositions />
@@ -17,6 +17,6 @@ export default function Home() {
       <WhyUs />
       <LatestJobSeekers />
       <Footer />
-    </>
+    </div>
   );
 }
