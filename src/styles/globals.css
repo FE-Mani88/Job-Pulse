@@ -16,7 +16,6 @@ body[data-theme='green'] {
   body[data-theme='purple'] {
 	--main-color: #8b5cf6;
   }
-  
 
 @layer base {
 	:root {
@@ -381,7 +380,6 @@ body::-webkit-scrollbar-thumb {
 	display: inline-block;
 }
 
-
 .btn {
 	background-color: rgb(255, 255, 255);
 	position: relative;
@@ -580,3 +578,4 @@ hr:after {
 		margin-left: -1000px;
 	}
 }
+
