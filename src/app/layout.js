@@ -1,3 +1,4 @@
+import { ThemeColorProvider } from "@/contexts/user-theme";
 import "../styles/globals.css";
 import { ThemeProvider } from "@/providers/theme-provider"
 
@@ -5,6 +6,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <ThemeColorProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -13,6 +15,7 @@ export default function RootLayout({ children }) {
         >
           {children}
         </ThemeProvider>
+        </ThemeColorProvider>
       </body>
     </html>
   );

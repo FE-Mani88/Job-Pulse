@@ -16,6 +16,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function NavMain({
   items
@@ -57,9 +58,9 @@ export function NavMain({
                       return (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <a href={subItem.url} className={`${subItem.url === pathname ? 'bg-zinc-700': ''}`}>
+                          <Link href={subItem.url} className={`${subItem.url === pathname ? 'bg-zinc-300 hover:bg-zinc-300 dark:bg-zinc-700 dark:bg-zinc-700': ''}`}>
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     )})}

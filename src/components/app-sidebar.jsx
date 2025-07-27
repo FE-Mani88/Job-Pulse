@@ -74,21 +74,21 @@ const data = {
       ],
     },
     {
-      title: "Models",
+      title: "Applies",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Sent Requests",
+          url: "/jobseeker-panel/sent-requests",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Active projects",
+          url: "/jobseeker-panel/active-projects",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Employers",
+          url: "/jobseeker-panel/employers",
         },
       ],
     },

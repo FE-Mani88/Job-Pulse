@@ -1,9 +1,8 @@
-import React from 'react'
+// app/jobseeker-panel/layout.js
+'use client'
 
-export default function layout({ children }) {
-    return (
-        <>
-            {children}
-        </>
-    )
+import JobSeekerPanelLayout from '@/components/layouts/dashboards/jobseeker-panel-layout'
+
+export default function Layout({ children }) {
+  return <JobSeekerPanelLayout>{children}</JobSeekerPanelLayout>
 }
