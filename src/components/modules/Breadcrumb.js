@@ -26,7 +26,7 @@ export default function BreadcrumbTemplate({ routePath }) {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem className='text-2xl'>
-                        <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                        <BreadcrumbPage className='text-white dark:text-white'>Breadcrumb</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>

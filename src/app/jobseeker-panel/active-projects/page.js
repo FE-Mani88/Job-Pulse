@@ -5,6 +5,7 @@ import { CalendarRange, ChartNoAxesCombined, DollarSign, Users } from 'lucide-re
 import { colorMap } from '@/utils/constants'
 import { ThemeColorContext } from '@/contexts/user-theme'
 import { ProjectsPieChart } from '@/components/templates/JobSeekerPanel/PieChart'
+import { ProjectsDataTable } from '@/components/templates/JobSeekerPanel/ProjectsTable'
 
 export default function page() {
 
@@ -75,8 +76,9 @@ export default function page() {
                     </Card>
                 </div>
 
-                <div>
+                <div className='px-4'>
                     <ProjectsPieChart />
+                    <ProjectsDataTable />
                 </div>
 
             </div>

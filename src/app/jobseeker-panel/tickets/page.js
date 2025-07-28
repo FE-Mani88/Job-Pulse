@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext } from 'react'
-import { CardsChat } from '@/components/templates/JobSeekerPanel/Chat'
+import { CardsChat } from '@/components/templates/JobSeekerPanel/TicketChat'
 import { DataTableDemo } from '@/components/templates/JobSeekerPanel/Tickets'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardAction } from '@/components/ui/card'
 import { ThemeColorContext } from '@/contexts/user-theme'

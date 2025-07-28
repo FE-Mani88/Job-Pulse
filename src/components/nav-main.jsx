@@ -24,8 +24,6 @@ export function NavMain({
 
   const pathname = usePathname()
 
-  console.log(pathname)
-
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -38,7 +36,7 @@ export function NavMain({
             <Collapsible
               key={item.title}
               asChild
-              defaultOpen={item.isActive}
+              defaultOpen={true}
               className={`group/collapsible`}>
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
@@ -52,9 +50,6 @@ export function NavMain({
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => {
-
-                      console.log('sub item: ', subItem)
-
                       return (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>

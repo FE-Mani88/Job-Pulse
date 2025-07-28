@@ -237,7 +237,7 @@ export default function page() {
                 <Calendar mode="single" selected={date} onSelect={setDate} />
               </PopoverContent>
             </Popover>
-            <Button className={`${colorMap[themeColor]} text-black dark:text-white cursor-pointer`}>Download</Button>
+            <Button className={`${colorMap[themeColor]} text-white dark:text-white cursor-pointer`}>Download</Button>
           </div>
         </div>
 
