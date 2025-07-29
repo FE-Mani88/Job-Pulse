@@ -2,7 +2,7 @@
 'use client'
 
 import React, { useContext } from 'react'
-import { AppSidebar } from '@/components/app-sidebar'
+import { AppSidebar } from '@/components/JobSeekerPanel/app-sidebar'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { ThemeColorContext } from '@/contexts/user-theme'
 import { useTheme } from 'next-themes'

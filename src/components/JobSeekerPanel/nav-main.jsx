@@ -29,9 +29,6 @@ export function NavMain({
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-
-          // console.log('Item: ', item)
-
           return (
             <Collapsible
               key={item.title}

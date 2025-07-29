@@ -1,30 +1,19 @@
-"use client"
-
 import * as React from "react"
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  LayoutDashboard,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+import { Plus } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
+import { Calendars } from "@/components/calendars"
+import { DatePicker } from "@/components/date-picker"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 
@@ -35,98 +24,47 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
+  calendars: [
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      name: "My Calendars",
+      items: ["Personal", "Work", "Family"],
     },
     {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
+      name: "Favorites",
+      items: ["Holidays", "Birthdays"],
     },
     {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Activities",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Overview",
-          url: "/jobseeker-panel/overview",
-        },
-        {
-          title: "Tickets",
-          url: "/jobseeker-panel/tickets",
-        },
-        {
-          title: "Favorites",
-          url: "/jobseeker-panel/favorites",
-        },
-      ],
-    },
-    {
-      title: "Applies",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Sent Requests",
-          url: "/jobseeker-panel/sent-requests",
-        },
-        {
-          title: "Active projects",
-          url: "/jobseeker-panel/active-projects",
-        },
-        {
-          title: "Employers",
-          url: "/jobseeker-panel/employers",
-        },
-      ],
-    }
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "Other",
+      items: ["Travel", "Reminders", "Deadlines"],
     },
   ],
 }
 
 export function AppSidebar({
-  themeColor,
   ...props
 }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher themeColor={themeColor} teams={data.teams} />
+    <Sidebar {...props}>
+      <SidebarHeader className="border-sidebar-border h-16 border-b">
+        <NavUser user={data.user} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <Link href='/' className="py-2 px-3 mt-2 mx-1.5 rounded-sm bg-zinc-700 hover:bg-zinc-800 transition-colors">
+          Test Route
+        </Link> */}
+        <DatePicker />
+        <SidebarSeparator className="mx-0" />
+        <Calendars calendars={data.calendars} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
+              <Plus />
+              <span>New Calendar</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
