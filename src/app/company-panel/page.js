@@ -44,6 +44,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PriceRange } from "@/components/templates/CompanyPanel/PriceRange"
+import { Formik } from "formik"
 
 export default function Page() {
   const { color } = useContext(ThemeColorContext)
@@ -71,7 +73,6 @@ export default function Page() {
         <div className="px-4 py-3">
           <div className="w-full flex flex-col gap-6">
             <Tabs defaultValue="positions" onValueChange={setActiveTab}>
-              {/* 👇 اینجا دکمه Add کنار تب‌ها اضافه شده */}
               <div className="flex items-center justify-between">
                 <TabsList>
                   <TabsTrigger value="positions">Positions</TabsTrigger>
@@ -79,37 +80,59 @@ export default function Page() {
                 </TabsList>
                 {activeTab === "positions" && (
                   <Dialog>
-                  <form>
-                    <DialogTrigger asChild>
-                      <Button className='cursor-pointer'>Create New Position</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Add Position</DialogTitle>
-                        <DialogDescription>
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio obcaecati nostrum debitis.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4">
-                        <div className="grid gap-3">
-                          <Label htmlFor="name-1">Title</Label>
-                          <Input id="name-1" name="title" />
-                        </div>
-                        <div className="grid gap-3">
-                          <Label htmlFor="username-1">Description</Label>
-                          <Input id="username-1" name="description" />
-                        </div>
-                        
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                        <Button type="submit">Save changes</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </form>
-                </Dialog>
+                    <Formik initialValues={{ name: '', description: '', salary: '40', degree: 'diploma' }} onSubmit={async (values) => {
+                      const res = await fetch('http://localhost:3000/position/create', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                          name: values.name,
+                          description: values.description,
+                          salary: values.salary,
+                          degree: values.degree
+                        })
+                      })
+                      const data = await res.json()
+
+                      console.log('POSITION CREATE: ', data)
+                    }}>
+                      {({ values, handleChange, handleSubmit }) => (
+                        <form>
+                          <DialogTrigger asChild>
+                            <Button className='cursor-pointer'>Create New Position</Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>Add Position</DialogTitle>
+                              <DialogDescription>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio obcaecati nostrum debitis.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4">
+                              <div className="grid gap-3">
+                                <Label htmlFor="name-1">Title</Label>
+                                <Input id="name-1" name="name" value={values.name} onChange={handleChange} />
+                              </div>
+                              <div className="grid gap-3">
+                                <Label htmlFor="username-1">Description</Label>
+                                <Input id="username-1" name="description" value={values.description} onChange={handleChange} />
+                              </div>
+
+                              <PriceRange className='w-full pt-2' />
+                            </div>
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                              </DialogClose>
+                              <Button type="submit" onClick={handleSubmit}>Save changes</Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </form>
+                      )}
+                    </Formik>
+                  </Dialog>
                 )}
               </div>
 

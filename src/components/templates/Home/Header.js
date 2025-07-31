@@ -54,7 +54,7 @@ export default function Header({ shouldBeFullWidth }) {
   return (
     <nav
       className={`
-        left-1/2 transform dark:bg-zinc-800/80 dark:border-b dark:border-zinc-600 -translate-x-1/2 w-full z-50 py-6 px-8 flex justify-between items-center transition-all duration-500 ease-in-out
+        left-1/2 transform dark:bg-[#242a38] dark:border-b dark:border-zinc-600 -translate-x-1/2 w-full z-50 py-6 px-8 flex justify-between items-center transition-all duration-500 ease-in-out
         ${isShouldFixTop
           ? 'fixed top-0 border-b-[0.5px] border-gray-300 bg-white shadow-sm sm:px-18'
           : 'absolute mt-4 bg-white xl:max-w-6xl lg:max-w-5xl md:max-w-3xl sm:max-w-xl max-w-lg'
