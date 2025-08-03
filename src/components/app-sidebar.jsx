@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Plus } from "lucide-react"
-
 import { Calendars } from "@/components/calendars"
 import { DatePicker } from "@/components/date-picker"
 import { NavUser } from "@/components/nav-user"
@@ -41,12 +40,13 @@ const data = {
 }
 
 export function AppSidebar({
+  user,
   ...props
 }) {
   return (
     <Sidebar {...props}>
       <SidebarHeader className="border-sidebar-border h-16 border-b">
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarHeader>
       <SidebarContent>
         {/* <Link href='/' className="py-2 px-3 mt-2 mx-1.5 rounded-sm bg-zinc-700 hover:bg-zinc-800 transition-colors">

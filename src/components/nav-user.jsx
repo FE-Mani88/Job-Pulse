@@ -1,5 +1,4 @@
 "use client"
-
 import {
   BadgeCheck,
   Bell,
@@ -34,6 +33,18 @@ export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
+  
+  const employerLogoutHandler = async () => {
+    const logoutRes = await fetch('http://localhost:3000/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    })
+
+    console.log('Auth Logout => ', logoutRes)
+  }
 
   return (
     <SidebarMenu>
@@ -48,7 +59,7 @@ export function NavUser({
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user.username}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -94,7 +105,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={employerLogoutHandler}>
               <LogOut />
               Log out
             </DropdownMenuItem>

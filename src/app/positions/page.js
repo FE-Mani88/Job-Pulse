@@ -167,13 +167,16 @@ export default function Page() {
   useEffect(() => {
     const getPositionsHandler = async () => {
       const positionsRes = await fetch('http://localhost:3000/company/', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
-        },
-
+        }
       })
+
+      console.log(await positionsRes.json())
     }
+
+    getPositionsHandler()
   }, [])
 
   return (

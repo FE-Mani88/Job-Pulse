@@ -34,6 +34,8 @@ export function SignupForm({
           credentials: 'include'
         })
 
+        console.log(await registerRes.json())
+
         if (registerRes.ok) {
           setTimeout(async () => {
             const loginRes = await fetch('http://localhost:3000/auth/login', {
@@ -56,7 +58,8 @@ export function SignupForm({
               })
             }
 
-            console.log('AUTH LOG: ', res)
+            console.log('AUTH REG', registerRes)
+            console.log('AUTH LOG: ', loginRes)
           }, 500)
         }
 
