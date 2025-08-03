@@ -41,7 +41,6 @@ export default function JobSeekerPanelLayout({ children }) {
     <SidebarProvider>
       <AppSidebar themeColor={color} />
       <SidebarInset>
-        {/* Header ثابت */}
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b">
           <div className="w-full flex justify-between items-center pr-2 sm:pr-6">
             <div className="flex items-center gap-2 px-4">

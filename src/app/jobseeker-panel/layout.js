@@ -1,4 +1,3 @@
-// app/jobseeker-panel/layout.js
 'use client'
 
 import JobSeekerPanelLayout from '@/components/layouts/dashboards/jobseeker-panel-layout'

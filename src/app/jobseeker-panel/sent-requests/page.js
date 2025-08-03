@@ -12,7 +12,6 @@ export default function page() {
 
     return (
         <>
-
             <div className={`${colorMap[color]} transition-colors grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-5 py-6`}>
                 <Card className='gap-4 rounded-sm'>
                     <CardHeader>

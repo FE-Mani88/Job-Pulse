@@ -24,6 +24,6 @@ export default function RootLayout({ children }) {
 export const metadata = {
   title: 'Job Pulse',
   icons: {
-    icon: '/images/upscalemedia-transformed (1).jpeg'
+    icon: 'https://cdn-icons-png.flaticon.com/128/1055/1055685.png'
   }
 }

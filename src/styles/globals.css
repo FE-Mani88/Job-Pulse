@@ -136,76 +136,20 @@ body::-webkit-scrollbar-thumb {
 
 /* HTML: <div class="loader"></div> */
 .loader {
-	width: 84px;
+	color: #0ce956;
+	width: 4px;
 	aspect-ratio: 1;
-	background:
-		radial-gradient(farthest-side at bottom right, #0cf160 90%, #0000),
-		radial-gradient(farthest-side at bottom left, #0cf160 90%, #0000),
-		radial-gradient(farthest-side at top right, #0cf160 90%, #0000),
-		radial-gradient(farthest-side at top left, #0cf160 90%, #0000),
-		radial-gradient(farthest-side at bottom right, #f4dd51 90%, #0000),
-		radial-gradient(farthest-side at bottom left, #f4dd51 90%, #0000),
-		radial-gradient(farthest-side at top right, #f4dd51 90%, #0000),
-		radial-gradient(farthest-side at top left, #f4dd51 90%, #0000),
-		radial-gradient(farthest-side at bottom right, #e20f4b 90%, #0000),
-		radial-gradient(farthest-side at bottom left, #e20f4b 90%, #0000),
-		radial-gradient(farthest-side at top right, #e20f4b 90%, #0000),
-		radial-gradient(farthest-side at top left, #e20f4b 90%, #0000);
-	background-size: 25% 25%;
-	background-repeat: no-repeat;
-	animation: l16 2s infinite;
-}
+	border-radius: 50%;
+	box-shadow: 19px 0 0 7px, 38px 0 0 3px, 57px 0 0 0;
+	transform: translateX(-38px);
+	animation: l21 .5s infinite alternate linear;
+  }
+  
+  @keyframes l21 {
+	50%  {box-shadow: 19px 0 0 3px, 38px 0 0 7px, 57px 0 0 3px}
+	100% {box-shadow: 19px 0 0 0  , 38px 0 0 3px, 57px 0 0 7px}
+  }
 
-@keyframes l16 {
-	0% {
-		background-position:
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3)
-	}
-
-	16.67% {
-		background-position:
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3)
-	}
-
-	33.33% {
-		background-position:
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3),
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3)
-	}
-
-	50% {
-		background-position:
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3),
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3),
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3)
-	}
-
-	66.67% {
-		background-position:
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3),
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3)
-	}
-
-	83.33% {
-		background-position:
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(0*100%/3) calc(0*100%/3), calc(3*100%/3) calc(0*100%/3), calc(0*100%/3) calc(3*100%/3), calc(3*100%/3) calc(3*100%/3)
-	}
-
-	100% {
-		background-position:
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3),
-			calc(1*100%/3) calc(1*100%/3), calc(2*100%/3) calc(1*100%/3), calc(1*100%/3) calc(2*100%/3), calc(2*100%/3) calc(2*100%/3)
-	}
-}
 
 @theme inline {
 	--radius-sm: calc(var(--radius) - 4px);
