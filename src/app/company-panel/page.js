@@ -62,20 +62,24 @@ export default function Page() {
     const getUserHandler = async () => {
       const userRes = await fetch('http://localhost:3000/jobseeker/getme', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
+        cache: 'no-store'
       })
 
       if (userRes.ok) {
         const userData = await userRes.json()
-        // if (userData.user.role !== 'company') {
-        //   Swal.fire({
-        //     icon: 'error',
-        //     title: 'You Cant Access To This Page :))',
-        //     confirmButtonText: 'I Undrestood'
-        //   })
+        if (userData.user.role !== 'company') {
 
-        //   return router.push('/signin')
-        // }
+          console.log(userData)
+          // Swal.fire({
+          //   icon: 'error',
+          //   title: 'You Cant Access To This Page :))',
+          //   confirmButtonText: 'I Undrestood'
+          // })
+
+          // return router.push('/signin')
+          return;
+        }
         setUserDetails(userData.user)
         return setLoading(false)
       }
