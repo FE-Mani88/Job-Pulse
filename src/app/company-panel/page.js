@@ -47,6 +47,7 @@ import { Label } from "@/components/ui/label"
 import { PriceRange } from "@/components/templates/CompanyPanel/PriceRange"
 import { Formik } from "formik"
 import { useRouter } from "next/navigation"
+import Swal from "sweetalert2"
 
 export default function Page() {
   const { color } = useContext(ThemeColorContext)
@@ -66,6 +67,15 @@ export default function Page() {
 
       if (userRes.ok) {
         const userData = await userRes.json()
+        // if (userData.user.role !== 'company') {
+        //   Swal.fire({
+        //     icon: 'error',
+        //     title: 'You Cant Access To This Page :))',
+        //     confirmButtonText: 'I Undrestood'
+        //   })
+
+        //   return router.push('/signin')
+        // }
         setUserDetails(userData.user)
         return setLoading(false)
       }

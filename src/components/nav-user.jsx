@@ -28,22 +28,38 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import Swal from "sweetalert2"
+import { useRouter } from "next/navigation"
 
 export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
-  
-  const employerLogoutHandler = async () => {
-    const logoutRes = await fetch('http://localhost:3000/auth/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    })
+  const { router } = useRouter()
 
-    console.log('Auth Logout => ', logoutRes)
+  const employerLogoutHandler = async () => {
+    try {
+      const logoutRes = await fetch('http://localhost:3000/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'You Are Logged Out Successfully',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          router.push('/')
+        })
+      })
+
+      console.log('Auth Logout => ', logoutRes)
+    } catch (error) {
+
+    }
+
   }
 
   return (
