@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
 import { Formik } from "formik"
+import Link from "next/link"
 
 export function LoginForm({
   className,
@@ -13,9 +13,23 @@ export function LoginForm({
 }) {
   return (
     <div className={cn("flex flex-col gap-6 dark:bg-zinc-900 px-6 py-8 rounded-md", className)} {...props}>
-      <Formik initialValues={{ email: '', password: '' }}>
-        {({ values }) => (
-          <form>
+      <Formik initialValues={{ email: '', password: '' }} onSubmit={async (values) => {
+        const loginRes = await fetch('http://localhost:3000/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password
+          }),
+          credentials: 'include'
+        })
+
+        console.log("LOGIN RES => ", loginRes)
+      }}>
+        {({ values, handleChange, handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-2">
                 <Link href="/" className="flex flex-col items-center gap-2 font-medium">
@@ -32,11 +46,11 @@ export function LoginForm({
               <div className="flex flex-col gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="m@example.com" required />
+                  <Input value={values.email} onChange={handleChange} id="email" type="email" placeholder="m@example.com" required />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" placeholder="password" required />
+                  <Input value={values.password} onChange={handleChange} id="password" type="password" placeholder="password" required />
                 </div>
                 <Button type="submit" className="w-full">
                   Login

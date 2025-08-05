@@ -3,13 +3,10 @@ import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 
-export function PriceRange({ className, ...props }) {
-
-    const [price, setPrice] = useState([50])
+export function PriceRange({ price, setPrice, className, ...props }) {
 
     const changeHandler = (value) => {
         setPrice(value)
-        console.log(value[0])
     }
 
     return (

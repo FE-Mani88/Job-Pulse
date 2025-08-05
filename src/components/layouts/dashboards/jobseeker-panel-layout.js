@@ -1,7 +1,6 @@
-// components/layouts/job-seeker-panel-layout.jsx
 'use client'
 
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppSidebar } from '@/components/JobSeekerPanel/app-sidebar'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { ThemeColorContext } from '@/contexts/user-theme'
@@ -32,14 +31,107 @@ import {
   SelectLabel,
   SelectItem
 } from '@/components/ui/select'
+import { useRouter } from 'next/navigation'
+import Swal from 'sweetalert2'
 
 export default function JobSeekerPanelLayout({ children }) {
   const { color, changeColor } = useContext(ThemeColorContext)
   const { setTheme } = useTheme()
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [userDetails, setUserDetails] = useState(null)
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const userRes = await fetch('http://localhost:3000/jobseeker/getme', {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store'
+        })
+
+        if (userRes.ok) {
+          const userData = await userRes.json()
+          if (userData.user.role !== 'job_seeker') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Access Denied',
+              text: 'Only job seekers can access this page.',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              router.push('/signin')
+            })
+            return
+          }
+          setUserDetails(userData.user)
+          setLoading(false)
+          return
+        }
+
+        if (userRes.status === 401) {
+          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
+            method: 'POST',
+            credentials: 'include'
+          })
+
+          if (refreshRes.ok) {
+            const retryUserRes = await fetch('http://localhost:3000/jobseeker/getme', {
+              method: 'POST',
+              credentials: 'include'
+            })
+
+            if (retryUserRes.ok) {
+              const userData = await retryUserRes.json()
+              if (userData.user.role !== 'job_seeker') {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Access Denied',
+                  text: 'Only job seekers can access this page.',
+                  confirmButtonText: 'OK'
+                }).then(() => {
+                  router.push('/signin')
+                })
+                return
+              }
+              setUserDetails(userData.user)
+              setLoading(false)
+              return
+            }
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Unauthorized',
+            text: 'Please log in to access this page.',
+            confirmButtonText: 'OK'
+          }).then(() => {
+            router.push('/signin')
+          })
+        } else {
+          throw new Error('Failed to fetch user data')
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred while checking authentication.',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          router.push('/signin')
+        })
+      }
+    }
+
+    checkAuth()
+  }, [router])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <SidebarProvider>
-      <AppSidebar themeColor={color} />
+      <AppSidebar themeColor={color} user={userDetails} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b">
           <div className="w-full flex justify-between items-center pr-2 sm:pr-6">
@@ -136,7 +228,6 @@ export default function JobSeekerPanelLayout({ children }) {
           </div>
         </header>
 
-        {/* محتوای داینامیک */}
         <div className="">
           {children}
         </div>
