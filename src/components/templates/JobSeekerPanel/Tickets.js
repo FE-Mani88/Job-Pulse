@@ -1,5 +1,6 @@
-"use client"
+'use client'
 import * as React from "react"
+import { useEffect, useState } from "react"
 import {
   flexRender,
   getCoreRowModel,
@@ -8,19 +9,8 @@ import {
   getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
+import { ArrowUpDown, Check, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -30,209 +20,341 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox" // Import Checkbox component
+import { Formik } from "formik"
+import { useRouter } from "next/navigation"
+import Swal from "sweetalert2"
 
-const data = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com"
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com"
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com"
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com"
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com"
-  }
-]
-
+// Define columns with checkbox column added
 export const columns = [
   {
     id: "select",
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={value => row.toggleSelected(!!value)}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
+    size: 50 // Set width for checkbox column
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "subject",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Subject
+        <ArrowUpDown />
+      </Button>
+    ),
+    cell: ({ row }) => <div>{row.getValue("subject")}</div>,
+    size: 200 // Set width for subject column
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    )
+      <div className="max-w-xs truncate">{row.getValue("description")}</div>
+    ),
+    size: 300 // Set width for description column
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => {
+    accessorKey: "isAnswered",
+    header: () => <div className="text-center">Answered</div>,
+    cell: ({ row }) => {
+      const isAnswered = row.getValue("isAnswered")
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
+        <div className="flex justify-center items-center">
+          {isAnswered ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+        </div>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>
-  },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD"
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    }
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    }
+    size: 80 // Set fixed width for isAnswered column
   }
 ]
 
 export function DataTableDemo() {
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState([])
-  const [columnVisibility, setColumnVisibility] = React.useState({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sortingState, setSortingState] = useState([])
+  const [filterState, setFilterState] = useState([])
+  const [visibleColumns, setVisibleColumns] = useState({})
+  const [selectedRows, setSelectedRows] = useState({})
+  const [tickets, setTickets] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const userRes = await fetch('http://localhost:3000/jobseeker/getme', {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store'
+        })
+
+        if (userRes.ok) {
+          const userData = await userRes.json()
+          if (userData.user.role !== 'job_seeker') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Access Denied',
+              text: 'Only job seekers can access this page.',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              router.push('/signin')
+            })
+            return
+          }
+
+          const ticketRes = await fetch('http://localhost:3000/ticket/mytickets', {
+            method: 'POST',
+            credentials: 'include'
+          })
+
+          if (ticketRes.ok) {
+            const ticketsData = await ticketRes.json()
+            setTickets(ticketsData.tickets || [])
+            setIsLoading(false)
+          } else {
+            throw new Error('Failed to fetch tickets')
+          }
+        } else if (userRes.status === 401) {
+          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
+            method: 'POST',
+            credentials: 'include'
+          })
+
+          if (refreshRes.ok) {
+            const retryUserRes = await fetch('http://localhost:3000/jobseeker/getme', {
+              method: 'POST',
+              credentials: 'include'
+            })
+
+            if (retryUserRes.ok) {
+              const userData = await retryUserRes.json()
+              if (userData.user.role !== 'job_seeker') {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Access Denied',
+                  text: 'Only job seekers can access this page.',
+                  confirmButtonText: 'OK'
+                }).then(() => {
+                  router.push('/signin')
+                })
+                return
+              }
+
+              const ticketRes = await fetch('http://localhost:3000/ticket/mytickets', {
+                method: 'POST',
+                credentials: 'include'
+              })
+
+              if (ticketRes.ok) {
+                const ticketsData = await ticketRes.json()
+                setTickets(ticketsData.tickets || [])
+                setIsLoading(false)
+              } else {
+                throw new Error('Failed to fetch tickets')
+              }
+            } else {
+              throw new Error('Failed to refresh token')
+            }
+          } else {
+            throw new Error('Unauthorized')
+          }
+        } else {
+          throw new Error('Failed to fetch user data')
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred while fetching data.',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          router.push('/signin')
+        })
+      }
+    }
+
+    fetchTickets()
+  }, [router])
 
   const table = useReactTable({
-    data,
+    data: tickets,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onSortingChange: setSortingState,
+    onColumnFiltersChange: setFilterState,
+    onColumnVisibilityChange: setVisibleColumns,
+    onRowSelectionChange: setSelectedRows,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection
-    }
+      sorting: sortingState,
+      columnFilters: filterState,
+      columnVisibility: visibleColumns,
+      rowSelection: selectedRows
+    },
+    enableRowSelection: true, // Enable row selection
+    initialState: {
+      pagination: {
+        pageSize: 5 // Set page size to 5 tickets per page
+      }
+    },
+    columnResizeMode: 'onChange'
   })
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="w-full lg:w-3/5">
-      <div className="flex items-center py-4">
+      <div className="flex justify-between items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={table.getColumn("email")?.getFilterValue() ?? ""}
+          placeholder="Filter subjects..."
+          value={table.getColumn("subject")?.getFilterValue() ?? ""}
           onChange={event =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("subject")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter(column => column.getCanHide())
-              .map(column => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={value => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <Formik
+            initialValues={{ subject: '', description: '' }}
+            onSubmit={async (values, { resetForm }) => {
+              try {
+                const sendTicketRes = await fetch('http://localhost:3000/ticket/create', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    subject: values.subject,
+                    description: values.description
+                  }),
+                  credentials: 'include'
+                })
+
+                if (sendTicketRes.ok) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Ticket Created',
+                    text: 'Your ticket has been successfully created.',
+                    confirmButtonText: 'OK'
+                  }).then(async () => {
+                    const ticketRes = await fetch('http://localhost:3000/ticket/mytickets', {
+                      method: 'POST',
+                      credentials: 'include'
+                    })
+                    if (ticketRes.ok) {
+                      const ticketsData = await ticketRes.json()
+                      setTickets(ticketsData.tickets || [])
+                    }
+                    resetForm()
+                  })
+                } else {
+                  throw new Error('Failed to create ticket')
+                }
+              } catch (error) {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'An error occurred while creating the ticket.',
+                  confirmButtonText: 'OK'
+                })
+              }
+            }}
+          >
+            {({ values, handleChange, handleSubmit }) => (
+              <form>
+                <DialogTrigger asChild>
+                  <Button>New Ticket</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>New Ticket</DialogTitle>
+                    <DialogDescription>
+                      Create a new ticket here. Click send when you&apos;re done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4">
+                    <div className="grid gap-3">
+                      <Label htmlFor="subject">Subject</Label>
+                      <Input
+                        id="subject"
+                        name="subject"
+                        value={values.subject}
+                        onChange={handleChange}
+                        placeholder="Enter ticket subject"
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        id="description"
+                        name="description"
+                        value={values.description}
+                        onChange={handleChange}
+                        placeholder="Type your message here."
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit" onClick={handleSubmit}>Send Ticket</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </form>
+            )}
+          </Formik>
+        </Dialog>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    style={{ width: header.column.columnDef.size }}
+                    className="text-center"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -244,7 +366,11 @@ export function DataTableDemo() {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{ width: cell.column.columnDef.size }}
+                      className="text-center"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

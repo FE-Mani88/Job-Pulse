@@ -75,7 +75,7 @@ export default function page() {
         </Card>
       </div>
 
-      <div className='flex justify-between items-center flex-col lg:flex-row gap-4 px-4'>
+      <div className='flex justify-between items-center flex-col lg:flex-row gap-4 px-4 mt-6'>
         <CardsChat />
         <DataTableDemo />
       </div>

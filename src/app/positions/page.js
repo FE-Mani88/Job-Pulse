@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from "@/components/ui/bedge"
+import { Badge } from "@/components/ui/badge" // Corrected typo from 'bedge' to 'badge'
 import {
   ChevronDown,
   Heart,
@@ -34,24 +34,37 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card" // Removed unused CardAction
 import { textColorMap, colorMap } from '@/utils/constants'
 import { useTheme } from "next-themes"
 import { ThemeColorContext } from "@/contexts/user-theme"
 import { HomeNavigationMenu } from '@/components/templates/CompanyPanel/NavigationMenu'
 import Link from 'next/link'
 
-export default function Page() {
+// Array of 12 image URLs for sequential selection
+const imageUrls = [
+  "https://www.coursesonline.co.uk/wp-content/uploads/Subject-Programming.jpeg?height=485&dpr=2",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg/1200px-M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg",
+  "https://www.wework.com/ideas/wp-content/uploads/sites/4/2017/06/Web_150DPI-20190927_10th_Floor_Conference_Room_2_v1.jpg?fit=1120%2C630",
+  "https://dcgulf.com/wp-content/uploads/2024/10/pexels-pixabay-269077.jpg",
+  "https://data.si/en/wp-content/uploads/2018/05/business-address-slovenia-europe-800x445.jpg",
+  "https://img.etimg.com/thumb/width-420,height-315,imgsize-187595,resizemode-75,msid-121369346/news/company/corporate-trends/april-sees-march-of-new-companies-company-llp-registrations-hit-new-high-in-april-on-investor-optimism/indias-modern-office-growth-and-innovation.jpg",
+  "https://youthincmag.com/wp-content/uploads/2018/06/company-building-min.jpg",
+  "https://officeservicecompany.com/wp-content/uploads/2021/01/MobileHero.jpg",
+  "https://www.smallbusiness.nsw.gov.au/sites/default/files/styles/1280/public/2023-07/iStock-1492719618.jpg?itok=T1vG28Cx",
+  "https://builtin.com/sites/www.builtin.com/files/2024-02/technology-companies-india.jpg",
+  "https://assets.entrepreneur.com/content/3x2/2000/20150805204041-google-company-building-corporate.jpeg",
+  "https://workplaceinsight.net/wp-content/uploads/2019/07/Google-London.jpg",
+]
 
+export default function Page() {
   const { setTheme } = useTheme()
   const { color, changeColor } = useContext(ThemeColorContext)
-
   const [positions, setPositions] = useState([])
 
   // Dynamic color classes based on selected theme
@@ -166,14 +179,14 @@ export default function Page() {
 
   useEffect(() => {
     const getPositionsHandler = async () => {
-      const positionsRes = await fetch('http://localhost:3000/company/', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-
-      console.log(await positionsRes.json())
+      try {
+        const positionsRes = await fetch('http://localhost:3000/position/allpositions')
+        const positionsData = await positionsRes.json()
+        console.log(positionsData)
+        setPositions(positionsData.result)
+      } catch (error) {
+        throw error
+      }
     }
 
     getPositionsHandler()
@@ -264,7 +277,6 @@ export default function Page() {
 
       {/* Search bar */}
       <div className="bg-white dark:bg-zinc-900 px-7 py-4 flex justify-between items-center gap-2">
-
         <div className="flex items-center gap-2">
           <div className="flex w-full max-w-sm items-center gap-2">
             <div className="relative w-full">
@@ -404,204 +416,27 @@ export default function Page() {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1440px] mx-auto my-6 bg-white dark:bg-zinc-900 p-4 gap-4 rounded-sm">
-
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-        <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md">
-
-          {/* Card Image */}
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr7fmWvUSgsnXI0D2hK_w9qHYH1akQDwZe2g&s"
-            alt="Card Image"
-            className="w-full h-[180px] object-cover"
-          />
-
-          <CardHeader className="pt-4 pb-2">
-            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Full Stack Dev</CardTitle>
-            <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex illum optio quae, delectus possimus corrupti illo ipsa dolorem laboriosam perferendis ad, dolore rerum officia dolor eius alias mollitia. Unde, asperiores.</CardDescription>
-            {/* <CardAction className="text-sm text-blue-600 dark:text-blue-400">Card Action</CardAction> */}
-          </CardHeader>
-
-          <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-            <p>Pay: 150 - 200$</p>
-          </CardContent>
-
-          <CardFooter className="text-zinc-600 dark:text-zinc-400">
-            <Button className='w-full'>Apply</Button>
-          </CardFooter>
-
-        </Card>
-
+        {positions.length ? positions.map((position, index) => (
+          <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md" key={position.id}>
+            {/* Card Image */}
+            <img
+              src={imageUrls[index % imageUrls.length]}
+              alt="Position Image"
+              className="w-full h-[180px] object-cover"
+            />
+            <CardHeader className="pt-4 pb-2">
+              <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">{position.name}</CardTitle>
+              <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">{position.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
+              <p>Pay: {position.salary} - {Number(position.salary) + 30}$</p>
+            </CardContent>
+            <CardFooter className="text-zinc-600 dark:text-zinc-400">
+              <Button className='w-full'>Apply</Button>
+            </CardFooter>
+          </Card>
+        )) : 'No Position'}
       </div>
-
-
-
       {/* End Main Content */}
 
       <footer id="contact" className="bg-zinc-900 text-white py-16">
