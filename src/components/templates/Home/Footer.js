@@ -1,106 +1,191 @@
-import React from 'react';
-import { Users } from 'lucide-react';
-import { IconButton, Stack } from '@mui/material';
-import { FaInstagram, FaTelegramPlane, FaLinkedin, FaDiscord } from 'react-icons/fa';
+"use client"
+import React, { useContext } from "react"
+import { ThemeColorContext } from "@/contexts/user-theme"
+import {
+    Mail,
+    Linkedin,
+    Twitter,
+    Github,
+    Zap,
+    MapPin,
+    Phone,
+    Facebook,
+    Instagram,
+    Youtube,
+} from "lucide-react"
+import { textColorMap } from "@/utils/constants"
+import Link from "next/link"
 
 export default function Footer() {
+
+    const { color } = useContext(ThemeColorContext)
+
     return (
-        <>
-            <footer id='footer' className="bg-gray-100 dark:bg-gray-800 w-full py-10 mt-18">
-                <div className="w-full px-4 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto">
-                    
-                    {/* Top Row - Logo & Socials */}
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-                        {/* Logo */}
-                        <div className="text-xl flex items-center gap-2">
-                            <img src="/images/Group.png" alt="logo" />
-                            <div className="text-3xl font-bold">
-                                <span className="text-violet-950 dark:text-emerald-400">Job</span> <span className="text-emerald-400">Pulse</span>
+        <footer className="bg-gray-900 dark:bg-gray-950 text-white">
+            <div className="container px-4 md:px-6 py-16">
+                <div className="grid gap-8 lg:grid-cols-4 md:grid-cols-2">
+                    {/* Company Info */}
+                    <div className="space-y-6">
+                        <div className="flex items-center space-x-2">
+                            <Zap className={`h-8 w-8 ${textColorMap[color]}`} />
+                            <span className="text-2xl font-bold">Job Pulse</span>
+                        </div>
+                        <p className="text-gray-300 leading-relaxed">
+                            Empowering teams worldwide with intelligent workflow automation. Making complex processes simple and
+                            accessible for everyone.
+                        </p>
+                        <div className="flex space-x-4">
+                            <Link href="#" className="text-gray-400 hover:text-emerald-400 transition-colors" aria-label="Facebook">
+                                <Facebook className="h-5 w-5" />
+                            </Link>
+                            <Link href="#" className="text-gray-400 hover:text-emerald-400 transition-colors" aria-label="Twitter">
+                                <Twitter className="h-5 w-5" />
+                            </Link>
+                            <Link href="#" className="text-gray-400 hover:text-emerald-400 transition-colors" aria-label="LinkedIn">
+                                <Linkedin className="h-5 w-5" />
+                            </Link>
+                            <Link
+                                href="#"
+                                className="text-gray-400 hover:text-emerald-400 transition-colors"
+                                aria-label="Instagram"
+                            >
+                                <Instagram className="h-5 w-5" />
+                            </Link>
+                            <Link href="#" className="text-gray-400 hover:text-emerald-400 transition-colors" aria-label="YouTube">
+                                <Youtube className="h-5 w-5" />
+                            </Link>
+                            <Link href="#" className="text-gray-400 hover:text-emerald-400 transition-colors" aria-label="GitHub">
+                                <Github className="h-5 w-5" />
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Product Links */}
+                    <div className="space-y-6">
+                        <h3 className="text-lg font-semibold">Product</h3>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Features
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Integrations
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    API Documentation
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Pricing
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Enterprise
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Security
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Company Links */}
+                    <div className="space-y-6">
+                        <h3 className="text-lg font-semibold">Company</h3>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    About Us
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Careers
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Blog
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Press
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Partners
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-gray-300 transition-colors">
+                                    Contact
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Contact Info */}
+                    <div className="space-y-6">
+                        <h3 className="text-lg font-semibold">Get in Touch</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-start space-x-3">
+                                <MapPin className={`h-5 w-5 ${textColorMap[color]} mt-0.5 flex-shrink-0`} />
+                                <div className="text-gray-300">
+                                    <p>123 Innovation Drive</p>
+                                    <p>San Francisco, CA 94105</p>
+                                    <p>United States</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <Phone className={`h-5 w-5 ${textColorMap[color]} mt-0.5 flex-shrink-0`} />
+                                <Link href="tel:+1-555-123-4567" className="text-gray-300 transition-colors">
+                                    +1 (555) 123-4567
+                                </Link>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <Mail className={`h-5 w-5 ${textColorMap[color]} mt-0.5 flex-shrink-0`} />
+                                <Link
+                                    href="mailto:hello@jobpulse.com"
+                                    className="text-gray-300 transition-colors"
+                                >
+                                    hello@jobpulse.com
+                                </Link>
                             </div>
                         </div>
-
-                        {/* Social Icons */}
-                        <Stack direction="row" spacing={2}>
-                            <IconButton
-                                component="a"
-                                href="https://instagram.com"
-                                target="_blank"
-                                sx={{
-                                    backgroundColor: "#E1306C",
-                                    color: "white",
-                                    "&:hover": {
-                                        backgroundColor: "#c72c60",
-                                    },
-                                }}
-                            >
-                                <FaInstagram />
-                            </IconButton>
-                            <IconButton
-                                component="a"
-                                href="https://t.me"
-                                target="_blank"
-                                sx={{
-                                    backgroundColor: "#0088cc",
-                                    color: "white",
-                                    "&:hover": {
-                                        backgroundColor: "#007bb5",
-                                    },
-                                }}
-                            >
-                                <FaTelegramPlane />
-                            </IconButton>
-                            <IconButton
-                                component="a"
-                                href="https://linkedin.com"
-                                target="_blank"
-                                sx={{
-                                    backgroundColor: "#0A66C2",
-                                    color: "white",
-                                    "&:hover": {
-                                        backgroundColor: "#004182",
-                                    },
-                                }}
-                            >
-                                <FaLinkedin />
-                            </IconButton>
-                            <IconButton
-                                component="a"
-                                href="https://discord.com"
-                                target="_blank"
-                                sx={{
-                                    backgroundColor: "#5865F2",
-                                    color: "white",
-                                    "&:hover": {
-                                        backgroundColor: "#4752c4",
-                                    },
-                                }}
-                            >
-                                <FaDiscord />
-                            </IconButton>
-                        </Stack>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="w-full h-px bg-gray-300 mb-8" />
-
-                    {/* Content Columns */}
-                    <div className="flex flex-col md:flex-row gap-8">
-                        {Array(4).fill(0).map((_, i) => (
-                            <div key={i} className="w-full md:w-1/4">
-                                <h2 className="text-lg md:text-xl font-semibold mb-2">About Job Pulse</h2>
-                                <p className="text-neutral-500 text-sm leading-relaxed">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur voluptatum dolor reiciendis vel! Tempora ratione sint voluptas nihil.
-                                </p>
-                            </div>
-                        ))}
                     </div>
                 </div>
-            </footer>
 
-            {/* Footer Bottom Bar */}
-            <div className="bg-gray-300 dark:bg-gray-700 py-3 text-center text-sm md:text-base text-gray-700 dark:text-white">
-                Job Pulse, Created By <span className="font-semibold dark:text-green-400">Dev Mani</span> & <span className="font-semibold dark:text-green-400">Soroush GH</span>
+                {/* Bottom Section */}
+                <div className="border-t border-gray-800 mt-12 pt-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                        <div className="text-gray-400 text-sm">© 2024 Job Pulse. All rights reserved.</div>
+                        <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
+                            <Link href="#" className="text-gray-400 transition-colors">
+                                Privacy Policy
+                            </Link>
+                            <Link href="#" className="text-gray-400 transition-colors">
+                                Terms of Service
+                            </Link>
+                            <Link href="#" className="text-gray-400 transition-colors">
+                                Cookie Policy
+                            </Link>
+                            <Link href="#" className="text-gray-400 transition-colors">
+                                GDPR
+                            </Link>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </>
-    );
+        </footer>
+    )
 }
