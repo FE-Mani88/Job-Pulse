@@ -2,31 +2,7 @@
 import React, { useContext } from "react"
 import { ThemeColorContext } from "@/contexts/user-theme"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-    Users,
-    Target,
-    Heart,
-    Lightbulb,
-    Award,
-    Globe,
-    TrendingUp,
-    Shield,
-    Mail,
-    Linkedin,
-    Twitter,
-    Github,
-    Building,
-    Rocket,
-    Zap,
-    MapPin,
-    Phone,
-    Facebook,
-    Instagram,
-    Youtube,
-} from "lucide-react"
-import { colorMap, textColorMap } from "@/utils/constants"
+import { colorMap } from "@/utils/constants"
 
 export default function JoinUs() {
 
