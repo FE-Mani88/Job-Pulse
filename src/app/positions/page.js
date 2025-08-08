@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from "@/components/ui/badge" // Corrected typo from 'bedge' to 'badge'
+import { Badge } from "@/components/ui/badge"
 import {
   ChevronDown,
   Heart,
@@ -39,14 +39,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card" // Removed unused CardAction
+} from "@/components/ui/card"
 import { textColorMap, colorMap } from '@/utils/constants'
 import { useTheme } from "next-themes"
 import { ThemeColorContext } from "@/contexts/user-theme"
 import { HomeNavigationMenu } from '@/components/templates/CompanyPanel/NavigationMenu'
+import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
+import Swal from 'sweetalert2'
 
-// Array of 12 image URLs for sequential selection
 const imageUrls = [
   "https://www.coursesonline.co.uk/wp-content/uploads/Subject-Programming.jpeg?height=485&dpr=2",
   "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg/1200px-M%C3%BCnster%2C_LVM%2C_B%C3%BCrogeb%C3%A4ude_--_2013_--_5149-51.jpg",
@@ -66,8 +67,14 @@ export default function Page() {
   const { setTheme } = useTheme()
   const { color, changeColor } = useContext(ThemeColorContext)
   const [positions, setPositions] = useState([])
+  const [visibleCount, setVisibleCount] = useState(12)
+  const [searchBoxValue, setSearchBoxValue] = useState('')
+  const [error, setError] = useState(null)
 
-  // Dynamic color classes based on selected theme
+  const handleShowMore = () => {
+    setVisibleCount(prev => prev + 12)
+  }
+
   const dynamicColors = {
     primary: colorMap[color],
     primaryText: textColorMap[color],
@@ -183,14 +190,103 @@ export default function Page() {
         const positionsRes = await fetch('http://localhost:3000/position/allpositions')
         const positionsData = await positionsRes.json()
         console.log(positionsData)
-        setPositions(positionsData.result)
+        // Ensure result is an array, default to empty array if not
+        setPositions(Array.isArray(positionsData.result) ? positionsData.result : [])
+        setError(null)
       } catch (error) {
-        throw error
+        console.error('Error fetching positions:', error)
+        setPositions([])
+        setError('Failed to load positions. Please try again later.')
       }
     }
 
     getPositionsHandler()
   }, [])
+
+  const searchHandler = async () => {
+    try {
+      const searchResponse = await fetch(`http://localhost:3000/position/search?query=${searchBoxValue}`)
+      const searchData = await searchResponse.json()
+      // Ensure result is an array, default to empty array if not
+      setPositions(Array.isArray(searchData.result) ? searchData.result : [])
+      setError(null)
+    } catch (error) {
+      console.error('Error searching positions:', error)
+      setPositions([])
+      setError('Failed to search positions. Please try again later.')
+    }
+  }
+
+  useEffect(() => {
+    if (searchBoxValue) {
+      searchHandler()
+    } else {
+      const getPositionsHandler = async () => {
+        try {
+          const positionsRes = await fetch('http://localhost:3000/position/allpositions')
+          const positionsData = await positionsRes.json()
+          // Ensure result is an array, default to empty array if not
+          setPositions(Array.isArray(positionsData.result) ? positionsData.result : [])
+          setError(null)
+        } catch (error) {
+          console.error('Error fetching positions:', error)
+          setPositions([])
+          setError('Failed to load positions. Please try again later.')
+        }
+      }
+      getPositionsHandler()
+    }
+  }, [searchBoxValue])
+
+  const applyHandler = async (positionSlug) => {
+    try {
+      const applyResponse = await fetch(`http://localhost:3000/jobseeker/${positionSlug}/makerequest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+
+      if (applyResponse.status == 401) {
+        const refreshTokenResponse = await fetch('http://localhost:3000/auth/refresh', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        })
+
+        if (!refreshTokenResponse.ok) {
+          return Swal.fire({
+            icon: 'error',
+            title: 'You Must Be Register For Apply'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              router.push('signin')
+            }
+          })
+        }
+
+        const retryApplyResponse = await fetch(`http://localhost:3000/jobseeker/${positionSlug}/makerequest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        })
+
+        console.log('RETRY => ', retryApplyResponse)
+
+      }
+
+      console.log(applyResponse)
+      console.log(await applyResponse.json())
+
+    } catch (error) {
+      throw error
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-black">
@@ -275,7 +371,6 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Search bar */}
       <div className="bg-white dark:bg-zinc-900 px-7 py-4 flex justify-between items-center gap-2">
         <div className="flex items-center gap-2">
           <div className="flex w-full max-w-sm items-center gap-2">
@@ -285,6 +380,8 @@ export default function Page() {
                 type="search"
                 placeholder="Search For Positions"
                 className="h-12 rounded-[4px] pl-10 w-full"
+                value={searchBoxValue}
+                onChange={(e) => setSearchBoxValue(e.target.value)}
               />
             </div>
           </div>
@@ -410,34 +507,56 @@ export default function Page() {
           </Select>
         </div>
 
-        <Button className='h-12 px-4 rounded-sm'>Search In Jobs</Button>
+        <Button className='h-12 px-4 rounded-sm' onClick={searchHandler}>Search In Jobs</Button>
       </div>
-      {/* End Search bar */}
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1440px] mx-auto my-6 bg-white dark:bg-zinc-900 p-4 gap-4 rounded-sm">
-        {positions.length ? positions.map((position, index) => (
-          <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md" key={position.id}>
-            {/* Card Image */}
-            <img
-              src={imageUrls[index % imageUrls.length]}
-              alt="Position Image"
-              className="w-full h-[180px] object-cover"
-            />
-            <CardHeader className="pt-4 pb-2">
-              <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">{position.name}</CardTitle>
-              <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">{position.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
-              <p>Pay: {position.salary} - {Number(position.salary) + 30}$</p>
-            </CardContent>
-            <CardFooter className="text-zinc-600 dark:text-zinc-400">
-              <Button className='w-full'>Apply</Button>
-            </CardFooter>
-          </Card>
-        )) : 'No Position'}
+      <div className="sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1440px] mx-auto my-6 bg-white dark:bg-zinc-900 p-4 rounded-sm">
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+          {error ? (
+            <div className="col-span-full text-center py-8">
+              <p className="text-lg text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          ) : positions.length ? (
+            positions.slice(0, visibleCount).map((position, index) => (
+              <Card className="overflow-hidden pt-0 pb-3 bg-white dark:bg-zinc-800 rounded-lg shadow dark:shadow-md" key={position.id}>
+                <img
+                  src={imageUrls[index % imageUrls.length]}
+                  alt="Position Image"
+                  className="w-full h-[180px] object-cover"
+                />
+                <CardHeader className="pt-4 pb-2">
+                  <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">{position.name}</CardTitle>
+                  <CardDescription className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">{position.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
+                  <p>Pay: {position.salary} - {Number(position.salary) + 30}$</p>
+                </CardContent>
+                <CardFooter className="text-zinc-600 dark:text-zinc-400">
+                  <Button className='w-full' onClick={() => applyHandler(position.slug)}>Apply</Button>
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            [1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
+              <div key={index} className="flex flex-col space-y-3">
+                <Skeleton className="h-[225px] rounded-xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {positions.length > 0 && visibleCount < positions.length && (
+          <div className="flex justify-center mt-6 mb-3">
+            <Button variant='outline' onClick={handleShowMore}>
+              Show More
+            </Button>
+          </div>
+        )}
       </div>
-      {/* End Main Content */}
 
       <footer id="contact" className="bg-zinc-900 text-white py-16">
         <div className="container px-4 md:px-6">

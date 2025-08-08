@@ -1,0 +1,21 @@
+{
+    "ci": {
+      "collect": {
+        "url": [
+          "http://localhost:3001/",
+          "http://localhost:3001/about-us",
+          "http://localhost:3001/rules",
+          "http://localhost:3001/positions",
+          "http://localhost:3001/admin-panel",
+          "http://localhost:3001/jobseeker-panel/overview",
+          "http://localhost:3001/company-panel"
+        ]
+      },
+      "assert": {
+        "preset": "lighthouse:recommended"
+      },
+      "upload": {
+        "target": "temporary-public-storage"
+      }
+    }
+  }

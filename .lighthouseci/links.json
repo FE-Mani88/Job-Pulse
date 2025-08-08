@@ -1,0 +1,9 @@
+{
+  "http://localhost:3001/": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644588538-49479.report.html",
+  "http://localhost:3001/about-us": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644589703-58982.report.html",
+  "http://localhost:3001/rules": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644591005-90966.report.html",
+  "http://localhost:3001/positions": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644592306-51953.report.html",
+  "http://localhost:3001/admin-panel": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644593705-8963.report.html",
+  "http://localhost:3001/jobseeker-panel/overview": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644594905-81950.report.html",
+  "http://localhost:3001/company-panel": "https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/1754644596003-27665.report.html"
+}
