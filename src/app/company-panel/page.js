@@ -46,7 +46,7 @@ import { Formik } from "formik"
 import { useRouter } from "next/navigation"
 import Swal from "sweetalert2"
 import { PriceRange } from "@/components/templates/CompanyPanel/PriceRange"
-import { BarLoader, BeatLoader, ClipLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
 export default function Page() {
   const { color } = useContext(ThemeColorContext)
@@ -200,14 +200,33 @@ export default function Page() {
                       body: JSON.stringify(values),
                       credentials: 'include'
                     })
+
                     if (createCompanyRes.ok) {
                       Swal.fire({
                         icon: 'success',
                         title: 'Company Created Successfully',
                         confirmButtonText: 'OK'
                       })
-                      const companyData = await createCompanyRes.json()
-                      setCompanyDetails(companyData)
+
+                      setIsDialogOpen(false)
+
+                      // آپدیت ریل تایم داده کمپانی
+                      const companyRes = await fetch('http://localhost:3000/company/getme', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
+                      })
+
+                      if (companyRes.ok) {
+                        const companyData = await companyRes.json()
+                        setCompanyDetails(companyData)
+                      } else {
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Error',
+                          text: 'Failed to refresh company data.',
+                        })
+                      }
                     } else {
                       Swal.fire({
                         icon: 'error',
@@ -224,15 +243,15 @@ export default function Page() {
                   }
                 }}>
                   {({ values, handleChange, handleSubmit }) => (
-                    <form onSubmit={handleSubmit}>
+                    <form>
                       <DialogTrigger asChild>
                         <Button variant="outline">Add Your Company</Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                          <DialogTitle>Edit profile</DialogTitle>
+                          <DialogTitle>Company</DialogTitle>
                           <DialogDescription>
-                            Make changes to your profile here.
+                            Make your company here.
                           </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4">
@@ -247,7 +266,7 @@ export default function Page() {
                           <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                           </DialogClose>
-                          <Button type="submit">Save changes</Button>
+                          <Button onClick={handleSubmit}>Create Company</Button>
                         </DialogFooter>
                       </DialogContent>
                     </form>
