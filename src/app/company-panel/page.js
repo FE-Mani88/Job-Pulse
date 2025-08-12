@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from "react"
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/templates/CompanyPanel/app-sidebar"
 import {
   Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage
 } from "@/components/ui/breadcrumb"

@@ -2,12 +2,8 @@
 import React, { useContext, useState, useEffect } from "react"
 import { ThemeColorContext } from "@/contexts/user-theme"
 import { Button } from "@/components/ui/button"
-import {
-    Zap
-} from "lucide-react"
-import { Moon, Sun } from "lucide-react"
+import { Zap, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { HomeNavigationMenu } from "@/components/modules/NavigationMenu"
 import {
     Select,
@@ -19,10 +15,23 @@ import {
     SelectItem
 } from '@/components/ui/select'
 import { colorMap, textColorMap } from "@/utils/constants"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 
 export default function Header() {
-
     const { setTheme } = useTheme()
     const { color, changeColor } = useContext(ThemeColorContext)
     const [user, setUser] = useState(null)
@@ -37,11 +46,37 @@ export default function Header() {
 
                 if (userResponse.ok) {
                     const userData = await userResponse.json()
-                    console.log(userData)
                     setUser(userData.user)
+                } else if (userResponse.status === 401) {
+                    // Refresh token request
+                    const refreshResponse = await fetch('http://localhost:3000/auth/refresh', {
+                        method: 'POST',
+                        credentials: 'include'
+                    })
+
+                    console.log(refreshResponse)
+
+                    if (refreshResponse.ok) {
+                        // Retry getme after refresh
+                        const retryUserResponse = await fetch('http://localhost:3000/jobseeker/getme', {
+                            method: 'POST',
+                            credentials: 'include'
+                        })
+                        if (retryUserResponse.ok) {
+                            const userData = await retryUserResponse.json()
+                            setUser(userData.user)
+                        } else {
+                            setUser(null)
+                        }
+                    } else {
+                        setUser(null)
+                    }
+                } else {
+                    setUser(null)
                 }
             } catch (error) {
-                throw error
+                console.error(error)
+                setUser(null)
             }
         }
 
@@ -55,7 +90,9 @@ export default function Header() {
                     <Zap className={`h-8 w-8 ${textColorMap[color]}`} />
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">Job Pulse</span>
                 </div>
+
                 <HomeNavigationMenu />
+
                 <div className="flex items-center space-x-2">
 
                     <Select value={color} onValueChange={changeColor}>
@@ -67,37 +104,29 @@ export default function Header() {
                                 <SelectLabel>Themes</SelectLabel>
                                 <SelectItem value="red">
                                     <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-4 h-4 rounded-full"
-                                            style={{ background: 'linear-gradient(to right, #F44336 50%, #FF9800 50%)' }}
-                                        ></span>
+                                        <span className="w-4 h-4 rounded-full"
+                                            style={{ background: 'linear-gradient(to right, #F44336 50%, #FF9800 50%)' }}></span>
                                         Red & Orange
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="green">
                                     <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-4 h-4 rounded-full"
-                                            style={{ background: 'linear-gradient(to right, #76FF03 50%, yellow 50%)' }}
-                                        ></span>
+                                        <span className="w-4 h-4 rounded-full"
+                                            style={{ background: 'linear-gradient(to right, #76FF03 50%, yellow 50%)' }}></span>
                                         Green & Yellow
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="purple">
                                     <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-4 h-4 rounded-full"
-                                            style={{ background: 'linear-gradient(to right, #E040FB 50%, #EC407A 50%)' }}
-                                        ></span>
+                                        <span className="w-4 h-4 rounded-full"
+                                            style={{ background: 'linear-gradient(to right, #E040FB 50%, #EC407A 50%)' }}></span>
                                         Purple & Pink
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="blue">
                                     <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-4 h-4 rounded-full"
-                                            style={{ background: 'linear-gradient(to right, #2196F3 50%, #81D4FA 50%)' }}
-                                        ></span>
+                                        <span className="w-4 h-4 rounded-full"
+                                            style={{ background: 'linear-gradient(to right, #2196F3 50%, #81D4FA 50%)' }}></span>
                                         Blue & Sky
                                     </div>
                                 </SelectItem>
@@ -107,15 +136,52 @@ export default function Header() {
 
                     {user ? null : (
                         <>
-                            <Button
+                            {/* Sign in */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                <Button
                                 variant="ghost"
                                 className="cursor-pointer bg-gray-100 dark:bg-inherit hidden sm:inline-flex text-gray-700 hover:bg-gray-150 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-900"
                             >
                                 <Link href="/signin">Sign In</Link>
                             </Button>
-                            <Button className={`cursor-pointer text-white ${colorMap[color]}`}>
-                                <Link href="/signup">Sign Up</Link>
-                            </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="start">
+                                    <DropdownMenuLabel>Select A Role</DropdownMenuLabel>
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>
+                                            <Link href='/signin'>Job Seekers & Employers</Link>
+                                            <DropdownMenuShortcut>⌘</DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <Link href='/admin-signin'>Admins</Link>
+                                            <DropdownMenuShortcut>⌘</DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {/* End Signin */}
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button className={`cursor-pointer text-white ${colorMap[color]}`}>
+                                        <Link href="/signup">Sign Up</Link>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="start">
+                                    <DropdownMenuLabel>Select A Role</DropdownMenuLabel>
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>
+                                            <Link href='/signup'>Job Seekers & Employers</Link>
+                                            <DropdownMenuShortcut>⌘</DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <Link href='/admin-signup'>Admins</Link>
+                                            <DropdownMenuShortcut>⌘</DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </>
                     )}
 

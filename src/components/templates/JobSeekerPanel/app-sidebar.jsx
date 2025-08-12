@@ -15,10 +15,10 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react"
-import { NavMain } from "@/components/JobSeekerPanel/nav-main"
-import { NavProjects } from "@/components/JobSeekerPanel/nav-projects"
-import { NavUser } from "@/components/JobSeekerPanel/nav-user"
-import { TeamSwitcher } from "@/components/JobSeekerPanel/team-switcher"
+import { NavMain } from "@/components/templates/JobSeekerPanel/nav-main"
+import { NavProjects } from "@/components/templates/JobSeekerPanel/nav-projects"
+import { NavUser } from "@/components/templates/JobSeekerPanel/nav-user"
+import { TeamSwitcher } from "@/components/templates/JobSeekerPanel/team-switcher"
 import {
   Sidebar,
   SidebarContent,
