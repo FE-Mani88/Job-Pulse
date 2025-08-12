@@ -118,6 +118,8 @@ export function SignupForm({
             <Link href="/signin" className="underline underline-offset-4">
               Sign in
             </Link>
+            <span>  / Or /  </span>
+            <Link href='/admin-signup' className="underline underline-offset-4">Sign up as admin</Link>
           </div>
         </form>
       )}

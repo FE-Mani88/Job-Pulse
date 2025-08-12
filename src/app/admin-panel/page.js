@@ -56,14 +56,6 @@ import { ChartLineInteractive } from '@/components/templates/AdminPanel/ChartLin
 import Header from '@/components/templates/AdminPanel/Header'
 import { colorMap } from '@/utils/constants'
 
-const data = [
-  { id: 'm5gr84i9', amount: 316, status: 'success', email: 'ken99@example.com' },
-  { id: '3u1reuv4', amount: 242, status: 'success', email: 'Abe45@example.com' },
-  { id: 'derv1ws0', amount: 837, status: 'processing', email: 'Monserrat44@example.com' },
-  { id: '5kma53ae', amount: 874, status: 'success', email: 'Silas22@example.com' },
-  { id: 'bhqecj4p', amount: 721, status: 'failed', email: 'carmella@example.com' },
-]
-
 const columns = [
   {
     id: 'select',
@@ -88,9 +80,9 @@ const columns = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'username',
     header: 'Username',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('status')}</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue('username')}</div>,
   },
   {
     accessorKey: 'email',
@@ -106,42 +98,46 @@ const columns = [
     cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
   },
   {
-    accessorKey: 'amount',
+    accessorKey: 'role',
     header: () => <div className="text-right">Role</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount)
-      return <div className="text-right font-medium">{formatted}</div>
-    },
+    cell: ({ row }) => (
+      <div className="text-right font-medium">{row.getValue('role')}</div>
+    ),
   },
   {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const user = row.original
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="text-right">  {/* <--- این div جدید برای alignment */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(user.id)}
+              >
+                Copy user ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => alert(`Edit ${user.username}`)}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-red-600"
+                onClick={() => handleDeleteUser(user.id)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       )
     },
   },
@@ -276,23 +272,22 @@ export default function Page() {
   const [positions, setPositions] = useState([])
 
   const table = useReactTable({
-    data,
+    data: users,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
+    state: { rowSelection },
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 5
+      },
     },
   })
+  
 
   const [tickets, setTickets] = useState([])
   const [ticketsLoading, setTicketsLoading] = useState(false)
@@ -317,7 +312,7 @@ export default function Page() {
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 5, // فقط 5 تیکت در هر صفحه
+        pageSize: 5,
       },
     },
     state: {
@@ -336,15 +331,12 @@ export default function Page() {
           credentials: 'include'
         })
 
-        // اگر توکن منقضی شده
         if (usersResponse.status === 401) {
           const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
             method: 'POST',
             credentials: 'include'
           })
           if (!refreshRes.ok) throw new Error('Token refresh failed')
-
-          // دوباره درخواست بفرست
           usersResponse = await fetch('http://localhost:3000/auth/allusers', {
             method: 'POST',
             credentials: 'include'
@@ -447,9 +439,9 @@ export default function Page() {
       <Header getThemeValueHandler={getThemeValueHandler} />
 
       <main className="mt-6 w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1440px] mx-auto">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-4">
           <h2 className="text-3xl font-semibold">Dashboard</h2>
-          <div className="flex items-center gap-1.5">
+          <div className="hidden sm:flex items-center gap-1.5">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -475,7 +467,7 @@ export default function Page() {
         {/* Start Tabs */}
         <div className="flex mt-6 w-full flex-col gap-6">
           <Tabs defaultValue="overview">
-            <TabsList>
+            <TabsList className='ml-4 sm:ml-0'>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="subscribtion">Subscribtion</TabsTrigger>
               <TabsTrigger value="tickets">Tickets</TabsTrigger>
@@ -666,35 +658,16 @@ export default function Page() {
                     </TableHeader>
                     <TableBody>
                       {table.getRowModel().rows.length ? (
-                        // table.getRowModel().rows.map((row) => (
-                        //   <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                        //     {row.getVisibleCells().map((cell) => (
-                        //       <TableCell key={cell.id}>
-                        //         {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        //       </TableCell>
-                        //     ))}
-                        //   </TableRow>
-                        // ))
-                       users.map((user, index) => (
-                        <TableRow>
-                          <TableCell>
-                            {index + 1}
-                          </TableCell>
-
-                          <TableCell>
-                            {user.username}
-                          </TableCell>
-
-                          <TableCell>
-                            {user.email}
-                          </TableCell>
-
-                          <TableCell className='text-right'>
-                            {user.role}
-                          </TableCell>
-
-                        </TableRow>
-                       ))
+                        table.getRowModel().rows.map((row) => (
+                          <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))
+                        
                       ) : (
                         <TableRow>
                           <TableCell colSpan={columns.length} className="h-24 text-center">
