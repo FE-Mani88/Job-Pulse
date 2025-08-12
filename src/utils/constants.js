@@ -24,3 +24,11 @@ export const strokeColorMap = {
     red: "#f87171",     // معادل bg-red-400
     purple: "#c084fc"  // معادل bg-purple-400
   };
+
+  export const glassBgColorMap = {
+    green: "bg-green-400/20 backdrop-blur-sm",
+    blue: "bg-blue-400/20 backdrop-blur-sm",
+    red: "bg-red-400/20 backdrop-blur-sm",
+    purple: "bg-purple-400/20 backdrop-blur-sm"
+  }
+  

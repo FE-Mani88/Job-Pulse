@@ -96,111 +96,43 @@ export const columns = [
   }
 ]
 
-export function DataTableDemo() {
+export function TicketsTable({refreshTicketsHandler}) {
   const [sortingState, setSortingState] = useState([])
   const [filterState, setFilterState] = useState([])
   const [visibleColumns, setVisibleColumns] = useState({})
   const [selectedRows, setSelectedRows] = useState({})
   const [tickets, setTickets] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const userRes = await fetch('http://localhost:3000/jobseeker/getme', {
+        const ticketRes = await fetch('http://localhost:3000/ticket/mytickets', {
           method: 'POST',
           credentials: 'include',
           cache: 'no-store'
         })
-
-        if (userRes.ok) {
-          const userData = await userRes.json()
-          if (userData.user.role !== 'job_seeker') {
-            Swal.fire({
-              icon: 'error',
-              title: 'Access Denied',
-              text: 'Only job seekers can access this page.',
-              confirmButtonText: 'OK'
-            }).then(() => {
-              router.push('/signin')
-            })
-            return
-          }
-
-          const ticketRes = await fetch('http://localhost:3000/ticket/mytickets', {
-            method: 'POST',
-            credentials: 'include'
-          })
-
-          if (ticketRes.ok) {
-            const ticketsData = await ticketRes.json()
-            setTickets(ticketsData.tickets || [])
-            setIsLoading(false)
-          } else {
-            throw new Error('Failed to fetch tickets')
-          }
-        } else if (userRes.status === 401) {
-          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
-            method: 'POST',
-            credentials: 'include'
-          })
-
-          if (refreshRes.ok) {
-            const retryUserRes = await fetch('http://localhost:3000/jobseeker/getme', {
-              method: 'POST',
-              credentials: 'include'
-            })
-
-            if (retryUserRes.ok) {
-              const userData = await retryUserRes.json()
-              if (userData.user.role !== 'job_seeker') {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Access Denied',
-                  text: 'Only job seekers can access this page.',
-                  confirmButtonText: 'OK'
-                }).then(() => {
-                  router.push('/signin')
-                })
-                return
-              }
-
-              const ticketRes = await fetch('http://localhost:3000/ticket/mytickets', {
-                method: 'POST',
-                credentials: 'include'
-              })
-
-              if (ticketRes.ok) {
-                const ticketsData = await ticketRes.json()
-                setTickets(ticketsData.tickets || [])
-                setIsLoading(false)
-              } else {
-                throw new Error('Failed to fetch tickets')
-              }
-            } else {
-              throw new Error('Failed to refresh token')
-            }
-          } else {
-            throw new Error('Unauthorized')
-          }
+  
+        if (ticketRes.ok) {
+          const ticketsData = await ticketRes.json()
+          setTickets(ticketsData.tickets || [])
+          setIsLoading(false)
         } else {
-          throw new Error('Failed to fetch user data')
+          throw new Error('Failed to fetch tickets')
         }
       } catch (error) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'An error occurred while fetching data.',
+          text: 'An error occurred while fetching tickets.',
           confirmButtonText: 'OK'
-        }).then(() => {
-          router.push('/signin')
         })
       }
     }
-
+  
     fetchTickets()
-  }, [router])
+  }, [])
+  
 
   const table = useReactTable({
     data: tickets,
@@ -276,6 +208,7 @@ export function DataTableDemo() {
                       setTickets(ticketsData.tickets || [])
                     }
                     resetForm()
+                    refreshTicketsHandler()
                   })
                 } else {
                   throw new Error('Failed to create ticket')

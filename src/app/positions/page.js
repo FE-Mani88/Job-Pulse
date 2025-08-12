@@ -2,6 +2,17 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Search
 } from 'lucide-react'
@@ -50,6 +61,7 @@ export default function Page() {
   const [visibleCount, setVisibleCount] = useState(12)
   const [searchBoxValue, setSearchBoxValue] = useState('')
   const [error, setError] = useState(null)
+  const [resumeFile, setResumeFile] = useState(null)
 
   const handleShowMore = () => {
     setVisibleCount(prev => prev + 12)
@@ -110,54 +122,102 @@ export default function Page() {
   }, [searchBoxValue])
 
   const applyHandler = async (positionSlug) => {
+    if (!resumeFile) {
+      return Swal.fire({
+        icon: "warning",
+        title: "لطفا رزومه خود را انتخاب کنید",
+      });
+    }
+  
     try {
-      const applyResponse = await fetch(`http://localhost:3000/jobseeker/${positionSlug}/makerequest`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-
-      if (applyResponse.status == 401) {
-        const refreshTokenResponse = await fetch('http://localhost:3000/auth/refresh', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
-        })
-
+      const formData = new FormData();
+      formData.append("file", resumeFile);
+  
+      const applyResponse = await fetch(
+        `http://localhost:3000/jobseeker/${positionSlug}/makerequest`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
+  
+      if (applyResponse.status === 401) {
+        const refreshTokenResponse = await fetch(
+          "http://localhost:3000/auth/refresh",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+  
         if (!refreshTokenResponse.ok) {
           return Swal.fire({
-            icon: 'error',
-            title: 'You Must Be Register For Apply'
+            icon: "error",
+            title: "برای اپلای باید ثبت‌نام کنید",
+            confirmButtonText: "رفتن به صفحه ورود"
           }).then((result) => {
             if (result.isConfirmed) {
-              router.push('signin')
+              router.push("signin");
             }
-          })
+          });
         }
-
-        const retryApplyResponse = await fetch(`http://localhost:3000/jobseeker/${positionSlug}/makerequest`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
-        })
-
-        console.log('RETRY => ', retryApplyResponse)
-
+  
+        // Retry درخواست پس از رفرش توکن
+        const retryFormData = new FormData();
+        retryFormData.append("file", resumeFile);
+  
+        const retryApplyResponse = await fetch(
+          `http://localhost:3000/jobseeker/${positionSlug}/makerequest`,
+          {
+            method: "POST",
+            body: retryFormData,
+            credentials: "include",
+          }
+        );
+  
+        if (!retryApplyResponse.ok) {
+          const errorMsg = await retryApplyResponse.text();
+          return Swal.fire({
+            icon: "error",
+            title: "خطا در ارسال درخواست",
+            text: errorMsg || "لطفا مجدداً تلاش کنید",
+          });
+        }
+  
+        return Swal.fire({
+          icon: "success",
+          title: "درخواست با موفقیت ارسال شد",
+        });
       }
-
-      console.log(applyResponse)
-      console.log(await applyResponse.json())
-
+  
+      if (!applyResponse.ok) {
+        const errorMsg = await applyResponse.text();
+        return Swal.fire({
+          icon: "error",
+          title: "خطا در ارسال درخواست",
+          text: errorMsg || "لطفا مجدداً تلاش کنید",
+        });
+      }
+  
+      Swal.fire({
+        icon: "success",
+        title: "درخواست با موفقیت ارسال شد",
+      });
     } catch (error) {
-      throw error
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "خطای سرور",
+        text: "لطفا بعداً مجدداً تلاش کنید",
+      });
     }
-  }
+  };
+  
+  
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-black">
@@ -325,8 +385,35 @@ export default function Page() {
                 <CardContent className="pt-0 text-zinc-800 dark:text-zinc-300">
                   <p>Pay: {position.salary} - {Number(position.salary) + 30}$</p>
                 </CardContent>
-                <CardFooter className="text-zinc-600 dark:text-zinc-400">
-                  <Button className='w-full' onClick={() => applyHandler(position.slug)}>Apply</Button>
+                <CardFooter className="text-zinc-600 dark:text-zinc-400 w-full">
+                  <Dialog className='w-full'>
+                    <form className='w-full'>
+                      <DialogTrigger asChild className='w-full'>
+                        <Button className='w-full'>Apply</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Edit profile</DialogTitle>
+                          <DialogDescription>
+                            Make changes to your profile here. Click save when you&apos;re
+                            done.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                          <div className="grid w-full max-w-sm items-center gap-3">
+                            <Label htmlFor="picture">Picture</Label>
+                            <Input id="picture" type="file" onChange={(e) => setResumeFile(e.target.files[0])} />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                          </DialogClose>
+                          <Button type="submit" onClick={() => applyHandler(position.slug)}>Save changes</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </form>
+                  </Dialog>
                 </CardFooter>
               </Card>
             ))

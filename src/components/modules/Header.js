@@ -1,22 +1,22 @@
 "use client"
-import React, { useContext } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import { ThemeColorContext } from "@/contexts/user-theme"
 import { Button } from "@/components/ui/button"
 import {
-  Zap
+    Zap
 } from "lucide-react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { HomeNavigationMenu } from "@/components/templates/CompanyPanel/NavigationMenu"
+import { HomeNavigationMenu } from "@/components/modules/NavigationMenu"
 import {
     Select,
     SelectTrigger,
     SelectValue,
     SelectContent,
     SelectGroup,
-  SelectLabel,
-  SelectItem
+    SelectLabel,
+    SelectItem
 } from '@/components/ui/select'
 import { colorMap, textColorMap } from "@/utils/constants"
 import Link from "next/link"
@@ -25,6 +25,28 @@ export default function Header() {
 
     const { setTheme } = useTheme()
     const { color, changeColor } = useContext(ThemeColorContext)
+    const [user, setUser] = useState(null)
+
+    useEffect(() => {
+        const getUserHandler = async () => {
+            try {
+                const userResponse = await fetch('http://localhost:3000/jobseeker/getme', {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+
+                if (userResponse.ok) {
+                    const userData = await userResponse.json()
+                    console.log(userData)
+                    setUser(userData.user)
+                }
+            } catch (error) {
+                throw error
+            }
+        }
+
+        getUserHandler()
+    }, [])
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-900 bg-white/80 dark:bg-black/60 backdrop-blur">
@@ -83,15 +105,19 @@ export default function Header() {
                         </SelectContent>
                     </Select>
 
-                    <Button
-                        variant="ghost"
-                        className="cursor-pointer bg-gray-100 dark:bg-inherit hidden sm:inline-flex text-gray-700 hover:bg-gray-150 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-900"
-                    >
-                        <Link href="/signin">Sign In</Link>
-                    </Button>
-                    <Button className={`cursor-pointer text-white ${colorMap[color]}`}>
-                        <Link href="/signup">Sign Up</Link>
-                    </Button>
+                    {user ? null : (
+                        <>
+                            <Button
+                                variant="ghost"
+                                className="cursor-pointer bg-gray-100 dark:bg-inherit hidden sm:inline-flex text-gray-700 hover:bg-gray-150 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-900"
+                            >
+                                <Link href="/signin">Sign In</Link>
+                            </Button>
+                            <Button className={`cursor-pointer text-white ${colorMap[color]}`}>
+                                <Link href="/signup">Sign Up</Link>
+                            </Button>
+                        </>
+                    )}
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

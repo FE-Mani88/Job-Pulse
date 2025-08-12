@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useContext, useEffect, useState } from 'react'
 import { AppSidebar } from '@/components/JobSeekerPanel/app-sidebar'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
@@ -32,14 +31,16 @@ import {
   SelectItem
 } from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import Swal from 'sweetalert2'
 
 export default function JobSeekerPanelLayout({ children }) {
   const { color, changeColor } = useContext(ThemeColorContext)
   const { setTheme } = useTheme()
-  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [userDetails, setUserDetails] = useState(null)
+  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -125,6 +126,12 @@ export default function JobSeekerPanelLayout({ children }) {
     checkAuth()
   }, [router])
 
+  function capitalizeFirstLetter(text) {
+    if (!text) return ""
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+  
+
   if (loading) {
     return <div>Loading...</div>
   }
@@ -144,13 +151,13 @@ export default function JobSeekerPanelLayout({ children }) {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Home page
+                    <BreadcrumbLink href="/">
+                      Home
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Overview</BreadcrumbPage>
+                    <BreadcrumbPage>{capitalizeFirstLetter(pathname.split('/')[2])}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>

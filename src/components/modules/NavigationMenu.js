@@ -1,5 +1,4 @@
 "use client"
-
 import * as React from "react"
 import Link from "next/link"
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react"
@@ -13,6 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu"
+import { useEffect } from "react"
 
 const components = [
   {
@@ -52,6 +52,30 @@ const components = [
 ]
 
 export function HomeNavigationMenu() {
+
+  const [user, setUser] = React.useState(null)
+
+  useEffect(() => {
+    const getUserHandler = async () => {
+      try {
+        const userResponse = await fetch('http://localhost:3000/jobseeker/getme', {
+          method: 'POST',
+          credentials: 'include'
+        })
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+          console.log(userData)
+          setUser(userData.user)
+        }
+      } catch (error) {
+        throw error
+      }
+    }
+
+    getUserHandler()
+  }, [])
+
   return (
     <NavigationMenu viewport={false}>
       <NavigationMenuList>
@@ -91,8 +115,8 @@ export function HomeNavigationMenu() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>
             <Link href='/about-us'>
-            About Us
-          </Link>
+              About Us
+            </Link>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
@@ -133,33 +157,42 @@ export function HomeNavigationMenu() {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleHelpIcon />
-                    Backlog
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleIcon />
-                    To Do
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleCheckIcon />
-                    Done
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
+
+
+        {/* Dashboard Link */}
+        {user ? (
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>
+              <Link href={`/${user.role === 'job_seeker' ? 'jobseeker-panel/overview': user.role === 'company'? 'company-panel': 'admin-panel'}`}>Dashboard</Link>
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[200px] gap-4">
+                <li>
+                  <NavigationMenuLink asChild>
+                    <Link href="#" className="flex-row items-center gap-2">
+                      <CircleHelpIcon />
+                      Backlog
+                    </Link>
+                  </NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link href="#" className="flex-row items-center gap-2">
+                      <CircleIcon />
+                      To Do
+                    </Link>
+                  </NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link href="#" className="flex-row items-center gap-2">
+                      <CircleCheckIcon />
+                      Done
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        ) : null}
+
+
       </NavigationMenuList>
     </NavigationMenu>
   )

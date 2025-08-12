@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SentRequestsTable } from '@/components/templates/JobSeekerPanel/SentRequestsTable'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardAction } from '@/components/ui/card'
 import { ThemeColorContext } from '@/contexts/user-theme'
@@ -9,6 +9,26 @@ import { CalendarRange, ChartNoAxesCombined, DollarSign, Users } from 'lucide-re
 export default function page() {
 
     const { color } = useContext(ThemeColorContext)
+    const [myApplies, setMyApplies] = useState(null)
+
+    useEffect(() => {
+        const getMyAppliesHandler = async () => {
+            try {
+                const myAppliesResponse = await fetch('http://localhost:3000/jobseeker/myrequests', {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+                const myAppliesData = await myAppliesResponse.json()
+
+                console.log(myAppliesData)
+                setMyApplies(myAppliesData)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        getMyAppliesHandler()
+    }, [])
 
     return (
         <>
@@ -75,7 +95,7 @@ export default function page() {
             </div>
 
             <div className='px-5 py-4'>
-                <SentRequestsTable />
+                <SentRequestsTable myApplies={myApplies} />
             </div>
         </>
     )

@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import Link from "next/link";
 import { useEffect, useState } from "react"
 
 const invoices = [
@@ -55,51 +56,46 @@ const invoices = [
   },
 ]
 
-export function SentRequestsTable() {
+export function SentRequestsTable({ myApplies }) {
 
-  const [applies, setApplies] = useState([])
-
-  useEffect(() => {
-    const getAppliesHandler = async () => {
-      try {
-        const appliesResponse = await fetch('http://localhost:3000/jobseeker/myrequests', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-
-        if (appliesResponse.ok) {
-          const appliesData = await appliesResponse.json()
-
-          setApplies(appliesData.requests)
-        }
-      } catch (error) {
-        throw error
-      }
-    }
-  }, [])
+  const applies = myApplies?.requests || [];
 
   return (
     <Table className=''>
       <TableCaption>A list of your applies</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Job Title</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="w-[100px]">Id</TableHead>
+          <TableHead>Job Title</TableHead>
+          <TableHead>Resume</TableHead>
+          <TableHead className="text-right">Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {applies.map((apply, index) => (
           <TableRow key={index}>
-            <TableCell className='font-medium'>{apply}</TableCell>
-            <TableCell className='font-medium'>{apply}</TableCell>
-            <TableCell className='font-medium'>{apply}</TableCell>
+            <TableCell className='font-medium'>{index + 1}</TableCell>
+            <TableCell className='font-medium'>{apply.position.name}</TableCell>
+            <TableCell className='font-medium'>
+              <Link href={apply.resume} className="underline">
+              Resume File
+              </Link>
+            </TableCell>
+            <TableCell className='font-medium text-right'>{apply.isAccept}</TableCell>
           </TableRow>
         ))}
-        {/* {invoices.map((invoice) => (
+      </TableBody>
+      {/* <TableFooter>
+        <TableRow>
+          <TableCell colSpan={3}>Total</TableCell>
+          <TableCell className="text-right">$2,500.00</TableCell>
+        </TableRow>
+      </TableFooter> */}
+    </Table>
+  )
+}
+
+{/* {invoices.map((invoice) => (
           <TableRow key={invoice.invoice}>
             <TableCell className="font-medium">{invoice.invoice}</TableCell>
             <TableCell>{invoice.paymentStatus}</TableCell>
@@ -107,13 +103,3 @@ export function SentRequestsTable() {
             <TableCell className="text-right">{invoice.totalAmount}</TableCell>
           </TableRow>
         ))} */}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
-  )
-}

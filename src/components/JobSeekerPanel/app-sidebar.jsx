@@ -64,8 +64,8 @@ const data = {
           url: "/jobseeker-panel/tickets",
         },
         {
-          title: "Favorites",
-          url: "/jobseeker-panel/favorites",
+          title: "Notifications",
+          url: "/jobseeker-panel/notifications",
         },
       ],
     },
