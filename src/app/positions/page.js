@@ -125,7 +125,7 @@ export default function Page() {
     if (!resumeFile) {
       return Swal.fire({
         icon: "warning",
-        title: "لطفا رزومه خود را انتخاب کنید",
+        title: "Please upload your resume",
       });
     }
   
@@ -157,8 +157,8 @@ export default function Page() {
         if (!refreshTokenResponse.ok) {
           return Swal.fire({
             icon: "error",
-            title: "برای اپلای باید ثبت‌نام کنید",
-            confirmButtonText: "رفتن به صفحه ورود"
+            title: "You should be authorize before apply",
+            confirmButtonText: "Login"
           }).then((result) => {
             if (result.isConfirmed) {
               router.push("signin");
@@ -166,7 +166,6 @@ export default function Page() {
           });
         }
   
-        // Retry درخواست پس از رفرش توکن
         const retryFormData = new FormData();
         retryFormData.append("file", resumeFile);
   
@@ -183,14 +182,14 @@ export default function Page() {
           const errorMsg = await retryApplyResponse.text();
           return Swal.fire({
             icon: "error",
-            title: "خطا در ارسال درخواست",
-            text: errorMsg || "لطفا مجدداً تلاش کنید",
+            title: "An Error Occured",
+            text: errorMsg || "Please Try Again",
           });
         }
   
         return Swal.fire({
           icon: "success",
-          title: "درخواست با موفقیت ارسال شد",
+          title: "Apply Sent Successfully",
         });
       }
   
@@ -198,21 +197,20 @@ export default function Page() {
         const errorMsg = await applyResponse.text();
         return Swal.fire({
           icon: "error",
-          title: "خطا در ارسال درخواست",
-          text: errorMsg || "لطفا مجدداً تلاش کنید",
+          title: "An Error Occured While Applying",
+          text: errorMsg || "Try Again",
         });
       }
   
       Swal.fire({
         icon: "success",
-        title: "درخواست با موفقیت ارسال شد",
+        title: "Request Sent Successfully",
       });
     } catch (error) {
       console.error(error);
       Swal.fire({
         icon: "error",
-        title: "خطای سرور",
-        text: "لطفا بعداً مجدداً تلاش کنید",
+        title: "Server Error",
       });
     }
   };

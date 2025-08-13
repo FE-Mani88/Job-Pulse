@@ -469,7 +469,6 @@ export default function Page() {
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="subscribtion">Subscribtion</TabsTrigger>
               <TabsTrigger value="tickets">Tickets</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
             </TabsList>
 
             {/* Data Cards  */}
