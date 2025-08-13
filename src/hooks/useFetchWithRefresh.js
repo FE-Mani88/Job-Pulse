@@ -9,13 +9,13 @@ export function useFetchWithRefresh() {
     setError(null);
 
     try {
-      let response = await fetch(url, {
+      let response = await fetch(`http://localhost:3000/${url}`, {
         ...options,
         credentials: 'include',
       });
 
       if (response.status === 401) {
-        const refreshRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`, {
+        const refreshRes = await fetch(`http://localhost:3000/auth/refresh`, {
           method: 'POST',
           credentials: 'include',
         });
@@ -24,10 +24,14 @@ export function useFetchWithRefresh() {
           throw new Error('Token refresh failed');
         }
 
-        response = await fetch(url, {
+        response = await fetch(`http://localhost:3000/${url}`, {
           ...options,
           credentials: 'include',
         });
+      }
+
+      if (response.status === 500) {
+        throw new Error('Unknown server error')
       }
 
       const data = await response.json();

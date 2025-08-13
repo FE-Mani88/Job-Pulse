@@ -326,35 +326,9 @@ export default function Page() {
   useEffect(() => {
     const getAdminHandler = async () => {
       try {
-        let adminResponse = await fetch('http://localhost:3000/jobseeker/getme', {
-          method: 'POST',
-          credentials: 'include'
+        const adminData = await callApi('jobseeker/getme', {
+          method: 'POST'
         })
-
-        if (adminResponse.status == 401) {
-          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
-            method: 'POST',
-            credentials: 'include'
-          })
-          if (!refreshRes.ok) {
-            console.log('First')
-            router.push('/')
-            return
-          }
-
-          adminResponse = await fetch('http://localhost:3000/jobseeker/getme', {
-            method: 'POST',
-            credentials: 'include'
-          })
-        }
-
-        if (!adminResponse.ok) {
-          console.log('Sec')
-          router.push('/')
-          return
-        }
-
-        const adminData = await adminResponse.json()
 
         if (!adminData.user.is_admin) {
           router.push('/')
@@ -362,15 +336,20 @@ export default function Page() {
         }
 
       } catch (error) {
+        const title =
+          error.message === 'Token refresh failed'
+            ? 'Session expired. Please login again.'
+            : 'Unexpected error in auth';
+
         Swal.fire({
           icon: 'error',
-          title: 'Unexpected error in auth',
+          title,
           confirmButtonText: 'OK'
         }).then(() => {
           router.push('/')
-        })
+        });
 
-        console.log(error)
+        console.log(error);
       }
     }
 
@@ -380,31 +359,18 @@ export default function Page() {
   useEffect(() => {
     const getUsersHandler = async () => {
       try {
-        let usersResponse = await fetch('http://localhost:3000/auth/allusers', {
+        const userData = await callApi('auth/allusers', {
           method: 'POST',
-          credentials: 'include'
         })
 
-        if (usersResponse.status === 401) {
-          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
-            method: 'POST',
-            credentials: 'include'
-          })
-          if (!refreshRes.ok) throw new Error('Token refresh failed')
-          usersResponse = await fetch('http://localhost:3000/auth/allusers', {
-            method: 'POST',
-            credentials: 'include'
-          })
-        }
-
-        if (usersResponse.ok) {
-          const usersData = await usersResponse.json()
-          setUsers(usersData.users)
-        } else {
-          throw new Error(`Users request failed: ${usersResponse.status}`)
-        }
+        setUsers(userData.users)
       } catch (error) {
-        console.error(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to fetch users',
+          text: error.message,
+          confirmButtonText: 'OK'
+        })
       }
     }
 
@@ -414,32 +380,16 @@ export default function Page() {
   useEffect(() => {
     const getCompaniesHandler = async () => {
       try {
-        let companiesResponse = await fetch('http://localhost:3000/company', {
-          credentials: 'include'
-        })
-
-        // اگر توکن منقضی شده
-        if (companiesResponse.status === 401) {
-          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
-            method: 'POST',
-            credentials: 'include'
-          })
-          if (!refreshRes.ok) throw new Error('Token refresh failed')
-
-          // دوباره درخواست بفرست
-          companiesResponse = await fetch('http://localhost:3000/company', {
-            credentials: 'include'
-          })
-        }
-
-        if (companiesResponse.ok) {
-          const companiesData = await companiesResponse.json()
-          setCompanies(companiesData.companies)
-        } else {
-          throw new Error(`Companies request failed: ${companiesResponse.status}`)
-        }
+        const companiesData = await callApi('company')
+        setCompanies(companiesData.companies)
       } catch (error) {
         console.error(error)
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to fetch companies',
+          text: error.message,
+          confirmButtonText: 'OK'
+        })
       }
     }
 
@@ -449,14 +399,15 @@ export default function Page() {
   useEffect(() => {
     const getPositionsHandler = async () => {
       try {
-        const positionsResponse = await fetch('http://localhost:3000/position/allpositions')
-
-        if (positionsResponse.ok) {
-          const positionsData = await positionsResponse.json()
-          setPositions(positionsData.result)
-        }
+        const positionsData = await callApi('position/allpositions')
+        setPositions(positionsData.result)
       } catch (error) {
-        throw error
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to fetch positions',
+          text: error.message,
+          confirmButtonText: 'OK'
+        })
       }
     }
 
@@ -468,17 +419,10 @@ export default function Page() {
       try {
         setTicketsLoading(true)
         setTicketsError(null)
-        const ticketsResponse = await fetch('http://localhost:3000/ticket/alltickets', {
-          method: 'POST',
-          credentials: 'include',
-        })
-        if (!ticketsResponse.ok) {
-          throw new Error('Failed to fetch tickets')
-        }
-        const ticketsData = await ticketsResponse.json()
-        // ساختار پاسخ شما:
-        // { tickets: [...], success: true }
+
+        const ticketsData = await callApi('ticket/alltickets', { method: 'POST' })
         setTickets(Array.isArray(ticketsData?.tickets) ? ticketsData.tickets : [])
+
       } catch (error) {
         setTicketsError(error?.message || 'Unknown error')
       } finally {
