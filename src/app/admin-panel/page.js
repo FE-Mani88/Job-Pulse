@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { ArrowUpDown, CalendarIcon, CalendarRange, BarChartIcon as ChartNoAxesCombined, ChevronDown, DollarSign, MoreHorizontal, Users, ClipboardCopy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -42,8 +42,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
-
-// tanstack table
 import {
   flexRender,
   getCoreRowModel,
@@ -53,8 +51,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { ChartLineInteractive } from '@/components/templates/AdminPanel/ChartLine'
-import Header from '@/components/templates/AdminPanel/Header'
+// import Header from '@/components/templates/AdminPanel/Header'
 import { colorMap } from '@/utils/constants'
+import Swal from 'sweetalert2'
+import { useRouter } from 'next/navigation'
+import Header from '@/components/modules/Header'
+import { ThemeColorContext } from '@/contexts/user-theme'
 
 const columns = [
   {
@@ -258,15 +260,14 @@ const ticketColumns = [
 ]
 
 export default function Page() {
-  // Shared UI state
+  const router = useRouter()
   const [date, setDate] = useState(undefined)
+  const { color } = useContext(ThemeColorContext)
   const [themeColor, setThemeColor] = useState('green')
-  const getThemeValueHandler = (themeValue) => setThemeColor(themeValue)
-
-  const [sorting, setSorting] = useState([])
-  const [columnFilters, setColumnFilters] = useState([])
-  const [columnVisibility, setColumnVisibility] = useState({})
+  // const getThemeValueHandler = (themeValue) => setThemeColor(themeValue)
   const [rowSelection, setRowSelection] = useState({})
+
+  const [admin, setAdmin] = useState(null)
   const [users, setUsers] = useState([])
   const [companies, setCompanies] = useState([])
   const [positions, setPositions] = useState([])
@@ -287,7 +288,6 @@ export default function Page() {
       },
     },
   })
-  
 
   const [tickets, setTickets] = useState([])
   const [ticketsLoading, setTicketsLoading] = useState(false)
@@ -322,6 +322,60 @@ export default function Page() {
       rowSelection: tRowSelection,
     },
   })
+
+  useEffect(() => {
+    const getAdminHandler = async () => {
+      try {
+        let adminResponse = await fetch('http://localhost:3000/jobseeker/getme', {
+          method: 'POST',
+          credentials: 'include'
+        })
+
+        if (adminResponse.status == 401) {
+          const refreshRes = await fetch('http://localhost:3000/auth/refresh', {
+            method: 'POST',
+            credentials: 'include'
+          })
+          if (!refreshRes.ok) {
+            console.log('First')
+            router.push('/')
+            return
+          }
+
+          adminResponse = await fetch('http://localhost:3000/jobseeker/getme', {
+            method: 'POST',
+            credentials: 'include'
+          })
+        }
+
+        if (!adminResponse.ok) {
+          console.log('Sec')
+          router.push('/')
+          return
+        }
+
+        const adminData = await adminResponse.json()
+
+        if (!adminData.user.is_admin) {
+          router.push('/')
+          return;
+        }
+
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Unexpected error in auth',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          router.push('/')
+        })
+
+        console.log(error)
+      }
+    }
+
+    getAdminHandler()
+  }, [])
 
   useEffect(() => {
     const getUsersHandler = async () => {
@@ -436,7 +490,7 @@ export default function Page() {
 
   return (
     <>
-      <Header getThemeValueHandler={getThemeValueHandler} />
+      <Header />
 
       <main className="mt-6 w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1440px] mx-auto">
         <div className="flex justify-between items-center px-4">
@@ -458,7 +512,7 @@ export default function Page() {
               </PopoverContent>
             </Popover>
 
-            <Button className={`${colorMap[themeColor]} text-white dark:text-white cursor-pointer`}>
+            <Button className={`${colorMap[color]} text-white dark:text-white cursor-pointer`}>
               Download
             </Button>
           </div>
@@ -480,7 +534,7 @@ export default function Page() {
                 <Card className="gap-4">
                   <CardHeader>
                     <CardTitle className="text-lg">Total Revenue</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
                       <DollarSign className="w-6 h-6" />
                     </CardAction>
                   </CardHeader>
@@ -495,7 +549,7 @@ export default function Page() {
                 <Card className="gap-4">
                   <CardHeader>
                     <CardTitle className="text-lg">Subscribtions</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
                       <Users className="w-6 h-6" />
                     </CardAction>
                   </CardHeader>
@@ -510,7 +564,7 @@ export default function Page() {
                 <Card className="gap-4">
                   <CardHeader>
                     <CardTitle className="text-lg">Sales</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
                       <CalendarRange className="w-6 h-6" />
                     </CardAction>
                   </CardHeader>
@@ -525,7 +579,7 @@ export default function Page() {
                 <Card className="gap-4">
                   <CardHeader>
                     <CardTitle className="text-lg">Active Now</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
                       <ChartNoAxesCombined className="w-6 h-6" />
                     </CardAction>
                   </CardHeader>
@@ -539,7 +593,7 @@ export default function Page() {
               </div>
 
               {/* CHART */}
-              <ChartLineInteractive themeColor={themeColor} />
+              <ChartLineInteractive />
               {/* CHART */}
             </TabsContent>
 
@@ -667,7 +721,7 @@ export default function Page() {
                             ))}
                           </TableRow>
                         ))
-                        
+
                       ) : (
                         <TableRow>
                           <TableCell colSpan={columns.length} className="h-24 text-center">
