@@ -51,12 +51,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { ChartLineInteractive } from '@/components/templates/AdminPanel/ChartLine'
-// import Header from '@/components/templates/AdminPanel/Header'
 import { colorMap } from '@/utils/constants'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/modules/Header'
 import { ThemeColorContext } from '@/contexts/user-theme'
+import { useFetchWithRefresh } from '@/hooks/useFetchWithRefresh'
 
 const columns = [
   {
@@ -263,8 +263,6 @@ export default function Page() {
   const router = useRouter()
   const [date, setDate] = useState(undefined)
   const { color } = useContext(ThemeColorContext)
-  const [themeColor, setThemeColor] = useState('green')
-  // const getThemeValueHandler = (themeValue) => setThemeColor(themeValue)
   const [rowSelection, setRowSelection] = useState({})
 
   const [admin, setAdmin] = useState(null)
@@ -322,6 +320,8 @@ export default function Page() {
       rowSelection: tRowSelection,
     },
   })
+
+  const { callApi } = useFetchWithRefresh()
 
   useEffect(() => {
     const getAdminHandler = async () => {
@@ -528,139 +528,79 @@ export default function Page() {
               <TabsTrigger value="notifications">Notifications</TabsTrigger>
             </TabsList>
 
+            {/* Data Cards  */}
+            <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 xl:px-0">
+              <Card className="gap-4">
+                <CardHeader>
+                  <CardTitle className="text-lg">Total Revenue</CardTitle>
+                  <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <DollarSign className="w-6 h-6" />
+                  </CardAction>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-semibold">$45,123.89</p>
+                </CardContent>
+                <CardFooter>
+                  <p className="text-gray-500">+21% from the last year</p>
+                </CardFooter>
+              </Card>
+
+              <Card className="gap-4">
+                <CardHeader>
+                  <CardTitle className="text-lg">Subscribtions</CardTitle>
+                  <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <Users className="w-6 h-6" />
+                  </CardAction>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-semibold">+2350</p>
+                </CardContent>
+                <CardFooter>
+                  <p className="text-gray-500">+37% from the last month</p>
+                </CardFooter>
+              </Card>
+
+              <Card className="gap-4">
+                <CardHeader>
+                  <CardTitle className="text-lg">Sales</CardTitle>
+                  <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <CalendarRange className="w-6 h-6" />
+                  </CardAction>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-semibold">+12874</p>
+                </CardContent>
+                <CardFooter>
+                  <p className="text-gray-500">+61% from the last week</p>
+                </CardFooter>
+              </Card>
+
+              <Card className="gap-4">
+                <CardHeader>
+                  <CardTitle className="text-lg">Active Now</CardTitle>
+                  <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
+                    <ChartNoAxesCombined className="w-6 h-6" />
+                  </CardAction>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-semibold">+578</p>
+                </CardContent>
+                <CardFooter>
+                  <p className="text-gray-500">+17% from the last year</p>
+                </CardFooter>
+              </Card>
+            </div>
+            {/* End Data Cards */}
+
             {/* Overview */}
             <TabsContent value="overview" className="mt-1.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 xl:px-0">
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Total Revenue</CardTitle>
-                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <DollarSign className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">$45,123.89</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+21% from the last year</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Subscribtions</CardTitle>
-                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <Users className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+2350</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+37% from the last month</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Sales</CardTitle>
-                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <CalendarRange className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+12874</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+61% from the last week</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Active Now</CardTitle>
-                    <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <ChartNoAxesCombined className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+578</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+17% from the last year</p>
-                  </CardFooter>
-                </Card>
-              </div>
-
               {/* CHART */}
               <ChartLineInteractive />
-              {/* CHART */}
+              {/* End CHART */}
             </TabsContent>
 
-            {/* Subscribtion*/}
+            {/* Subscribtion */}
             <TabsContent value="subscribtion" className="mt-1.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 xl:px-0">
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Users</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <DollarSign className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">{users?.length ? users.length : 0}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+21% from the last year</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Companies</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <Users className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">{companies?.length ? companies.length : 0}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+37% from the last month</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Positions</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <CalendarRange className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">{positions?.length ? positions.length : 0}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+61% from the last week</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Active Now</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <ChartNoAxesCombined className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+578</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+17% from the last year</p>
-                  </CardFooter>
-                </Card>
-              </div>
-
               <div className="w-full">
                 <div className="flex items-center py-4">
                   <Input
@@ -760,70 +700,8 @@ export default function Page() {
               </div>
             </TabsContent>
 
-            {/* Tickets - رندر لیست تیکت‌ها در جدول */}
+            {/* Tickets */}
             <TabsContent value="tickets" className="mt-1.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 xl:px-0">
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Total Revenue</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <DollarSign className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">$45,123.89</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+21% from the last year</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Subscribtions</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <Users className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+2350</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+37% from the last month</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Sales</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <CalendarRange className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+12874</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+61% from the last week</p>
-                  </CardFooter>
-                </Card>
-
-                <Card className="gap-4">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Active Now</CardTitle>
-                    <CardAction className={`${colorMap[themeColor]} text-white py-1.5 px-1.5 rounded-sm`}>
-                      <ChartNoAxesCombined className="w-6 h-6" />
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-3xl font-semibold">+578</p>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-gray-500">+17% from the last year</p>
-                  </CardFooter>
-                </Card>
-              </div>
-
               <div className="w-full">
                 <div className="flex items-center py-4">
                   <Input
