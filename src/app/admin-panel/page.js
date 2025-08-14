@@ -1,7 +1,7 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { ArrowUpDown, CalendarIcon, CalendarRange, BarChartIcon as ChartNoAxesCombined, ChevronDown, DollarSign, MoreHorizontal, Users, ClipboardCopy } from 'lucide-react'
+import { ArrowUpDown, CalendarIcon, CalendarRange, BarChartIcon as ChartNoAxesCombined, ChevronDown, DollarSign, MoreHorizontal, Users, ClipboardCopy, Paperclip } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Calendar } from '@/components/ui/calendar'
@@ -34,6 +34,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
   Table,
   TableBody,
   TableCell,
@@ -57,6 +65,8 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/modules/Header'
 import { ThemeColorContext } from '@/contexts/user-theme'
 import { useFetchWithRefresh } from '@/hooks/useFetchWithRefresh'
+import { AdminTicketChat } from '@/components/templates/Admin/admin-ticket-chat'
+import { ToastContainer } from 'react-toastify'
 
 const columns = [
   {
@@ -112,7 +122,7 @@ const columns = [
     cell: ({ row }) => {
       const user = row.original
       return (
-        <div className="text-right">  {/* <--- این div جدید برای alignment */}
+        <div className="text-right">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -169,14 +179,53 @@ const ticketColumns = [
     enableHiding: false,
   },
   {
-    accessorKey: 'id',
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        ID
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => <div className="tabular-nums">{row.getValue('id')}</div>,
+    id: 'attach',
+    header: 'Attach',
+    cell: ({ row }) => {
+      const t = row.original
+      const handleAttach = async () => {
+        try {
+          const response = await fetch(`http://localhost:3000/ticket/attach/${t.slug}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to attach ticket')
+          }
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Attachment successful',
+            confirmButtonText: 'OK'
+          })
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to attach ticket',
+            text: error.message,
+            confirmButtonText: 'OK'
+          })
+        }
+      }
+
+      return (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleAttach}
+          className="h-8 w-8 p-0"
+        >
+          <Paperclip className="h-4 w-4" />
+          <span className="sr-only">Attach ticket</span>
+        </Button>
+      )
+    },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'subject',
@@ -208,7 +257,7 @@ const ticketColumns = [
     cell: ({ row }) => {
       const answered = row.getValue('isAnswered')
       return answered ? (
-        <span className="inline-flex items-center rounded-md bg-emerald-600 px-2 py-1 text-xs font-medium text-white">
+        <span className="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white">
           Answered
         </span>
       ) : (
@@ -230,6 +279,19 @@ const ticketColumns = [
     enableHiding: false,
     cell: ({ row }) => {
       const t = row.original
+      const { callApi } = useFetchWithRefresh()
+      const handleViewDetails = async () => {
+        try {
+          const ticketData = await callApi(`ticket/${t.slug}`, {
+            method: 'POST',
+            credentials: 'include'
+          })
+          console.log('Ticket Details from API:', ticketData)
+        } catch (error) {
+          console.error('Failed to fetch ticket details:', error.message)
+        }
+      }
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -249,9 +311,22 @@ const ticketColumns = [
               Copy slug
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => alert(`Subject: ${t.subject}`)}>
-              View details
-            </DropdownMenuItem>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={handleViewDetails}>
+                  View details
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Ticket Details</DialogTitle>
+                  <DialogDescription>
+                    Detailed information about ticket #{t.id}
+                  </DialogDescription>
+                </DialogHeader>
+                <AdminTicketChat ticketSlug={t.slug} ticket={t} />
+              </DialogContent>
+            </Dialog>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -462,7 +537,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Start Tabs */}
         <div className="flex mt-6 w-full flex-col gap-6">
           <Tabs defaultValue="overview">
             <TabsList className='ml-4 sm:ml-0'>
@@ -471,7 +545,6 @@ export default function Page() {
               <TabsTrigger value="tickets">Tickets</TabsTrigger>
             </TabsList>
 
-            {/* Data Cards  */}
             <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <Card className="gap-4">
                 <CardHeader>
@@ -533,16 +606,11 @@ export default function Page() {
                 </CardFooter>
               </Card>
             </div>
-            {/* End Data Cards */}
 
-            {/* Overview */}
             <TabsContent value="overview" className="mt-1.5">
-              {/* CHART */}
               <ChartLineInteractive />
-              {/* End CHART */}
             </TabsContent>
 
-            {/* Subscribtion */}
             <TabsContent value="subscribtion" className="mt-1.5">
               <div className="w-full">
                 <div className="flex items-center py-4">
@@ -604,7 +672,6 @@ export default function Page() {
                             ))}
                           </TableRow>
                         ))
-
                       ) : (
                         <TableRow>
                           <TableCell colSpan={columns.length} className="h-24 text-center">
@@ -643,7 +710,6 @@ export default function Page() {
               </div>
             </TabsContent>
 
-            {/* Tickets */}
             <TabsContent value="tickets" className="mt-1.5">
               <div className="w-full">
                 <div className="flex items-center py-4">
@@ -761,8 +827,9 @@ export default function Page() {
             </TabsContent>
           </Tabs>
         </div>
-        {/* End Tabs */}
       </main>
+
+      <ToastContainer />
     </>
   )
 }
