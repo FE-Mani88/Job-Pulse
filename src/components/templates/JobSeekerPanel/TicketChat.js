@@ -127,6 +127,7 @@ export function CardsChat({ ticket }) {
       const sentTicketData = await sentTicketRes.json()
 
       if (sentTicketRes.status === 400 || sentTicketRes.status === 401) {
+        console.log(sentTicketData)
         throw new Error(
           sentTicketData.message === "you are not a part of this conversation"
             ? "You are not authorized to send messages in this conversation"
@@ -135,6 +136,7 @@ export function CardsChat({ ticket }) {
       }
 
       if (!sentTicketRes.ok) {
+        console.log(values.text)
         throw new Error(sentTicketData.message)
       }
 
