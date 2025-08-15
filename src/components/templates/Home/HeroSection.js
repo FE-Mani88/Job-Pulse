@@ -88,7 +88,9 @@ export default function HeroSection() {
               variant="outline"
               className="border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-black/80 backdrop-blur-sm hover:bg-white dark:hover:bg-black shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              Our Story
+              <Link href='/about-us'>
+                Our Story
+              </Link>
             </Button>
           </div>
         </div>
