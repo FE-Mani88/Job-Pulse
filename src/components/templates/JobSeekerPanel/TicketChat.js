@@ -1,11 +1,12 @@
+
 "use client"
 import * as React from "react"
 import { Check, Plus, Send } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Avatar,
-  AvatarFallback,
-  AvatarImage
+  AvatarImage,
+  AvatarFallback
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -37,72 +38,151 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip"
+import { toast, ToastContainer } from "react-toastify"
+import { Formik, Form, Field } from "formik"
+import * as Yup from "yup"
+import { useFetchWithRefresh } from "@/hooks/useFetchWithRefresh"
+
+// تعریف اسکیما با Yup
+const messageSchema = Yup.object().shape({
+  text: Yup.string()
+    .required("Message is required")
+    .min(10, "Message must be at least 10 characters")
+    .max(50, "Message cannot exceed 50 characters")
+    .trim(),
+})
 
 const users = [
   {
     name: "Olivia Martin",
     email: "m@example.com",
-    avatar: "/avatars/01.png"
+    avatar: "/avatars/01.png",
   },
   {
     name: "Isabella Nguyen",
     email: "isabella.nguyen@email.com",
-    avatar: "/avatars/03.png"
+    avatar: "/avatars/03.png",
   },
   {
     name: "Emma Wilson",
     email: "emma@example.com",
-    avatar: "/avatars/05.png"
+    avatar: "/avatars/05.png",
   },
   {
     name: "Jackson Lee",
     email: "lee@example.com",
-    avatar: "/avatars/02.png"
+    avatar: "/avatars/02.png",
   },
   {
     name: "William Kim",
     email: "will@email.com",
-    avatar: "/avatars/04.png"
-  }
+    avatar: "/avatars/04.png",
+  },
 ]
 
-export function CardsChat() {
+export function CardsChat({ ticket }) {
   const [open, setOpen] = React.useState(false)
   const [selectedUsers, setSelectedUsers] = React.useState([])
+  const [messages, setMessages] = React.useState([])
+  const { callApi } = useFetchWithRefresh()
 
-  const [messages, setMessages] = React.useState([
-    {
-      role: "agent",
-      content: "Hi, how can I help you today?"
-    },
-    {
-      role: "user",
-      content: "Hey, I'm having trouble with my account."
-    },
-    {
-      role: "agent",
-      content: "What seems to be the problem?"
-    },
-    {
-      role: "user",
-      content: "I can't log in."
+  // Set messages when ticket changes
+  React.useEffect(() => {
+    if (ticket && ticket.messages) {
+      setMessages(ticket.messages)
+    } else {
+      setMessages([])
     }
-  ])
-  const [input, setInput] = React.useState("")
-  const inputLength = input.trim().length
+  }, [ticket])
+
+  const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
+    if (!ticket || !ticket.slug) {
+      toast.error("No ticket selected")
+      setSubmitting(false)
+      return
+    }
+
+    try {
+      // Add temporary message to local state
+      const tempMessage = {
+        role: "user",
+        content: values.text,
+        text: values.text,
+        user_id: "temp",
+      }
+      setMessages([...messages, tempMessage])
+
+      // Send message to API
+      const sentTicketRes = await fetch(`http://localhost:3000/ticket/message/${ticket.slug}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: values.text,
+        }),
+        credentials: 'include'
+      })
+
+      const sentTicketData = await sentTicketRes.json()
+
+      if (sentTicketRes.status === 400 || sentTicketRes.status === 401) {
+        throw new Error(
+          sentTicketData.message === "you are not a part of this conversation"
+            ? "You are not authorized to send messages in this conversation"
+            : "An unknown error occurred"
+        )
+      }
+
+      if (!sentTicketRes.ok) {
+        throw new Error(sentTicketData.message)
+      }
+
+      // Replace temp message with actual message from API
+      const newMessage = {
+        role: "user",
+        content: values.text,
+        text: values.text,
+        user_id: sentTicketData.message?.user_id || "user",
+      }
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) => (msg.user_id === "temp" ? newMessage : msg))
+      )
+
+      toast.success("Message Sent Successfully")
+      resetForm()
+    } catch (err) {
+      // Remove failed message
+      setMessages(messages.filter((msg) => msg.user_id !== "temp"))
+      toast.error(err.message || "Failed to send message")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Show placeholder if no ticket is selected
+  if (!ticket) {
+    return (
+      <Card className="w-full lg:w-2/5">
+        <CardContent className="pt-6">
+          <p className="text-center text-gray-500">Select a ticket to view the chat</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <>
-      <Card className='w-full lg:w-2/5'>
+      <Card className="w-full lg:w-2/5">
         <CardHeader className="flex flex-row items-center">
           <div className="flex items-center space-x-4">
             <Avatar>
               <AvatarImage src="/avatars/01.png" alt="Image" />
-              <AvatarFallback>OM</AvatarFallback>
+              <AvatarFallback>{ticket.subject?.[0] || "T"}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium leading-none">Sofia Davis</p>
-              <p className="text-sm text-muted-foreground">m@example.com</p>
+              <p className="text-sm font-medium leading-none">{ticket.subject || "No Subject"}</p>
+              <p className="text-sm text-muted-foreground">{ticket.description || "No Description"}</p>
             </div>
           </div>
           <TooltipProvider delayDuration={0}>
@@ -122,52 +202,57 @@ export function CardsChat() {
             </Tooltip>
           </TooltipProvider>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-96 overflow-y-auto">
           <div className="space-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
-                  message.role === "user"
-                    ? "ml-auto bg-primary text-primary-foreground"
-                    : "bg-muted"
-                )}
-              >
-                {message.content}
-              </div>
-            ))}
+            {messages.length > 0 ? (
+              messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                    message.role === "user"
+                      ? "ml-auto bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  )}
+                >
+                  {message.text || message.content}
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">No messages yet</p>
+            )}
           </div>
         </CardContent>
         <CardFooter>
-          <form
-            onSubmit={event => {
-              event.preventDefault()
-              if (inputLength === 0) return
-              setMessages([
-                ...messages,
-                {
-                  role: "user",
-                  content: input
-                }
-              ])
-              setInput("")
-            }}
-            className="flex w-full items-center space-x-2"
+          <Formik
+            initialValues={{ text: "" }}
+            validationSchema={messageSchema}
+            onSubmit={handleSendMessage}
           >
-            <Input
-              id="message"
-              placeholder="Type your message..."
-              className="flex-1"
-              autoComplete="off"
-              value={input}
-              onChange={event => setInput(event.target.value)}
-            />
-            <Button type="submit" size="icon" disabled={inputLength === 0}>
-              <Send />
-              <span className="sr-only">Send</span>
-            </Button>
-          </form>
+            {({ errors, touched, isSubmitting }) => (
+              <Form className="flex w-full items-center space-x-2">
+                <div className="flex-1">
+                  <Field
+                    name="text"
+                    as={Input}
+                    id="message"
+                    placeholder="Type your message..."
+                    className={cn("flex-1", {
+                      "border-red-500": touched.text && errors.text,
+                    })}
+                    autoComplete="off"
+                  />
+                  {touched.text && errors.text && (
+                    <p className="text-sm text-red-500 mt-1">{errors.text}</p>
+                  )}
+                </div>
+                <Button type="submit" size="icon" disabled={isSubmitting}>
+                  <Send />
+                  <span className="sr-only">Send</span>
+                </Button>
+              </Form>
+            )}
+          </Formik>
         </CardFooter>
       </Card>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -175,8 +260,7 @@ export function CardsChat() {
           <DialogHeader className="px-4 pb-4 pt-5">
             <DialogTitle>New message</DialogTitle>
             <DialogDescription>
-              Invite a user to this thread. This will create a new group
-              message.
+              Invite a user to this thread. This will create a new group message.
             </DialogDescription>
           </DialogHeader>
           <Command className="overflow-hidden rounded-t-none border-t bg-transparent">
@@ -184,24 +268,17 @@ export function CardsChat() {
             <CommandList>
               <CommandEmpty>No users found.</CommandEmpty>
               <CommandGroup className="p-2">
-                {users.map(user => (
+                {users.map((user) => (
                   <CommandItem
                     key={user.email}
                     className="flex items-center px-2"
                     onSelect={() => {
                       if (selectedUsers.includes(user)) {
                         return setSelectedUsers(
-                          selectedUsers.filter(
-                            selectedUser => selectedUser !== user
-                          )
+                          selectedUsers.filter((selectedUser) => selectedUser !== user)
                         )
                       }
-
-                      return setSelectedUsers(
-                        [...users].filter(u =>
-                          [...selectedUsers, user].includes(u)
-                        )
-                      )
+                      return setSelectedUsers([...users].filter((u) => [...selectedUsers, user].includes(u)))
                     }}
                   >
                     <Avatar>
@@ -209,12 +286,8 @@ export function CardsChat() {
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="ml-2">
-                      <p className="text-sm font-medium leading-none">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {user.email}
-                      </p>
+                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
                     {selectedUsers.includes(user) ? (
                       <Check className="ml-auto flex h-5 w-5 text-primary" />
@@ -227,7 +300,7 @@ export function CardsChat() {
           <DialogFooter className="flex items-center border-t p-4 sm:justify-between">
             {selectedUsers.length > 0 ? (
               <div className="flex -space-x-2 overflow-hidden">
-                {selectedUsers.map(user => (
+                {selectedUsers.map((user) => (
                   <Avatar
                     key={user.email}
                     className="inline-block border-2 border-background"
@@ -253,6 +326,7 @@ export function CardsChat() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ToastContainer />
     </>
   )
 }

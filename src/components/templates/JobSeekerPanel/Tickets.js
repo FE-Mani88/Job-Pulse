@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import * as React from "react"
 import { useEffect, useState } from "react"
 import {
@@ -32,12 +32,11 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox" // Import Checkbox component
+import { Checkbox } from "@/components/ui/checkbox"
 import { Formik } from "formik"
-import { useRouter } from "next/navigation"
 import Swal from "sweetalert2"
 
-// Define columns with checkbox column added
+// Define columns
 export const columns = [
   {
     id: "select",
@@ -57,7 +56,7 @@ export const columns = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 50 // Set width for checkbox column
+    size: 50
   },
   {
     accessorKey: "subject",
@@ -71,7 +70,7 @@ export const columns = [
       </Button>
     ),
     cell: ({ row }) => <div>{row.getValue("subject")}</div>,
-    size: 200 // Set width for subject column
+    size: 200
   },
   {
     accessorKey: "description",
@@ -79,7 +78,7 @@ export const columns = [
     cell: ({ row }) => (
       <div className="max-w-xs truncate">{row.getValue("description")}</div>
     ),
-    size: 300 // Set width for description column
+    size: 300
   },
   {
     accessorKey: "isAnswered",
@@ -92,11 +91,11 @@ export const columns = [
         </div>
       )
     },
-    size: 80 // Set fixed width for isAnswered column
+    size: 80
   }
 ]
 
-export function TicketsTable({refreshTicketsHandler}) {
+export function TicketsTable({ refreshTicketsHandler, onTicketSelect }) {
   const [sortingState, setSortingState] = useState([])
   const [filterState, setFilterState] = useState([])
   const [visibleColumns, setVisibleColumns] = useState({})
@@ -132,7 +131,6 @@ export function TicketsTable({refreshTicketsHandler}) {
   
     fetchTickets()
   }, [])
-  
 
   const table = useReactTable({
     data: tickets,
@@ -151,10 +149,10 @@ export function TicketsTable({refreshTicketsHandler}) {
       columnVisibility: visibleColumns,
       rowSelection: selectedRows
     },
-    enableRowSelection: true, // Enable row selection
+    enableRowSelection: true,
     initialState: {
       pagination: {
-        pageSize: 5 // Set page size to 5 tickets per page
+        pageSize: 5
       }
     },
     columnResizeMode: 'onChange'
@@ -206,6 +204,9 @@ export function TicketsTable({refreshTicketsHandler}) {
                     if (ticketRes.ok) {
                       const ticketsData = await ticketRes.json()
                       setTickets(ticketsData.tickets || [])
+                      if (ticketsData.tickets && ticketsData.tickets.length > 0) {
+                        onTicketSelect(ticketsData.tickets[ticketsData.tickets.length - 1])
+                      }
                     }
                     resetForm()
                     refreshTicketsHandler()
@@ -232,7 +233,7 @@ export function TicketsTable({refreshTicketsHandler}) {
                   <DialogHeader>
                     <DialogTitle>New Ticket</DialogTitle>
                     <DialogDescription>
-                      Create a new ticket here. Click send when you&apos;re done.
+                      Create a new ticket here. Click send when you're done.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4">
@@ -297,6 +298,8 @@ export function TicketsTable({refreshTicketsHandler}) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => onTicketSelect(row.original)}
+                  className="cursor-pointer hover:bg-gray-800"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell

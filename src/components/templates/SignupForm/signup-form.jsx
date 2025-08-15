@@ -10,14 +10,40 @@ import {
   RadioGroupItem,
 } from "@/components/ui/radio-group"
 import Swal from "sweetalert2"
+import { useFetchWithRefresh } from "@/hooks/useFetchWithRefresh"
+import { useRouter } from "next/navigation"
+import * as Yup from 'yup';
+
+const SignupSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(8, 'Username must be at least 3 characters')
+    .required('Username is required'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+  phone: Yup.string()
+    .length(12, 'Phone Number Must Be 12 Character')
+    .required('Phone number is required'),
+  password: Yup.string()
+    .min(8, 'Password must be at least 8 characters')
+    .required('Password is required'),
+  role: Yup.string()
+    .oneOf(['job_seeker', 'company'], 'Invalid role')
+    .required('Role is required'),
+});
 
 export function SignupForm({
   className,
   ...props
 }) {
+
+  const { callApi } = useFetchWithRefresh()
+  const router = useRouter()
+
   return (
     <Formik
       initialValues={{ username: '', email: '', phone: '', password: '', role: 'job_seeker' }}
+      validationSchema={SignupSchema}
       onSubmit={async (values) => {
         const registerRes = await fetch('http://localhost:3000/auth/register', {
           method: 'POST',
@@ -33,8 +59,6 @@ export function SignupForm({
           }),
           credentials: 'include'
         })
-
-        console.log(await registerRes.json())
 
         if (registerRes.ok) {
           setTimeout(async () => {
@@ -55,18 +79,18 @@ export function SignupForm({
                 icon: 'success',
                 title: 'You Are Registered Successfully',
                 confirmButtonText: 'OK'
+              }).then(async () => {
+                const userData = await callApi('jobseeker/getme', {
+                  method: 'POST'
+                })
+
+                router.push(userData.user.role === 'job_seeker' ? 'jobseeker-panel/overview' : 'company-panel')
               })
             }
-
-            console.log('AUTH REG', registerRes)
-            console.log('AUTH LOG: ', loginRes)
           }, 500)
         }
-
-
-        console.log('AUTH REG: ', await res.json())
       }}>
-      {({ values, handleChange, setFieldValue, handleSubmit }) => (
+      {({ values, handleChange, setFieldValue, handleSubmit, errors, touched }) => (
         <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="text-2xl font-bold">Create Your Account</h1>
@@ -78,20 +102,32 @@ export function SignupForm({
             <div className="grid gap-3">
               <Label htmlFor="username">Username</Label>
               <Input id="username" type="username" placeholder="Username" value={values.username} onChange={handleChange} />
+              {errors.username && touched.username && (
+                <div className="text-red-500">{errors.username}</div>
+              )}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" placeholder="m@example.com" value={values.email} onChange={handleChange} />
+              {errors.email && touched.email && (
+                <div className="text-red-500">{errors.email}</div>
+              )}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="phone">Phone</Label>
               <Input id="phone" type="phone" placeholder="09213839123" value={values.phone} onChange={handleChange} />
+              {errors.phone && touched.phone && (
+                <div className="text-red-500">{errors.phone}</div>
+              )}
             </div>
             <div className="grid gap-3">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
               </div>
               <Input id="password" type="password" value={values.password} onChange={handleChange} />
+              {errors.password && touched.password && (
+                <div className="text-red-500">{errors.password}</div>
+              )}
             </div>
             <RadioGroup defaultValue="job_seeker" value={values.role} onValueChange={(value) => setFieldValue("role", value)}>
               <div className="flex items-center gap-3">

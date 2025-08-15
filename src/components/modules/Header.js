@@ -36,29 +36,24 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { IconQuestionMark } from "@tabler/icons-react"
+import { useFetchWithRefresh } from "@/hooks/useFetchWithRefresh"
 
 export default function Header() {
     const { setTheme } = useTheme()
     const { color, changeColor } = useContext(ThemeColorContext)
     const [user, setUser] = useState(null)
+    const { callApi } = useFetchWithRefresh()
 
     useEffect(() => {
         const getUserHandler = async () => {
             try {
-                const userResponse = await fetch('http://localhost:3000/jobseeker/getme', {
-                    method: 'POST',
-                    credentials: 'include'
+                const userData = await callApi('jobseeker/getme', {
+                    method: 'POST'
                 })
 
-                if (userResponse.ok) {
-                    const userData = await userResponse.json()
-                    setUser(userData.user)
-                } else {
-                    setUser(null)
-                }
+                setUser(userData)
             } catch (error) {
-                console.error(error)
+                console.log("401")
                 setUser(null)
             }
         }
