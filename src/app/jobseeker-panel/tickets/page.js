@@ -32,9 +32,9 @@ export default function Page() {
       } catch (error) {
         Swal.fire({
           icon: "error",
-          title: "خطا در بارگذاری تیکت‌ها",
-          text: error.message || "خطایی رخ داد",
-          confirmButtonText: "تأیید",
+          title: "Tickets Loading Failed",
+          text: error.message || "An Error Occured",
+          confirmButtonText: "Confirm",
         })
       }
     }
@@ -66,9 +66,9 @@ export default function Page() {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "خطا در رفرش تیکت‌ها",
-        text: error.message || "خطایی رخ داد",
-        confirmButtonText: "تأیید",
+        title: "An Error Occured While Refreshing Tickets",
+        text: error.message || "An Error Occured",
+        confirmButtonText: "Confirm",
       })
     }
   }
@@ -90,7 +90,7 @@ export default function Page() {
       <div className={`${colorMap[color]} transition-colors grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-5 py-6`}>
         <Card className="gap-4 rounded-sm">
           <CardHeader>
-            <CardTitle className="text-lg">همه تیکت‌ها</CardTitle>
+            <CardTitle className="text-lg">All Tickets</CardTitle>
             <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
               <DollarSign className="w-6 h-6" />
             </CardAction>
@@ -99,13 +99,13 @@ export default function Page() {
             <p className="text-3xl font-semibold">{tickets.length}</p>
           </CardContent>
           <CardFooter>
-            <p className="text-gray-500">+21% از سال گذشته</p>
+            <p className="text-gray-500">Last Year: +20%</p>
           </CardFooter>
         </Card>
 
         <Card className="gap-4 rounded-sm">
           <CardHeader>
-            <CardTitle className="text-lg">تیکت‌های باز</CardTitle>
+            <CardTitle className="text-lg">Open Tickets</CardTitle>
             <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
               <Users className="w-6 h-6" />
             </CardAction>
@@ -114,13 +114,13 @@ export default function Page() {
             <p className="text-3xl font-semibold">{calculateUnansweredTickets()}</p>
           </CardContent>
           <CardFooter>
-            <p className="text-gray-500">+37% از ماه گذشته</p>
+            <p className="text-gray-500">+37% From Last Month</p>
           </CardFooter>
         </Card>
 
         <Card className="gap-4 rounded-sm">
           <CardHeader>
-            <CardTitle className="text-lg">تیکت‌های بسته‌شده</CardTitle>
+            <CardTitle className="text-lg">Closed Tickets</CardTitle>
             <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
               <CalendarRange className="w-6 h-6" />
             </CardAction>
@@ -129,13 +129,13 @@ export default function Page() {
             <p className="text-3xl font-semibold">{calculateAnsweredTickets()}</p>
           </CardContent>
           <CardFooter>
-            <p className="text-gray-500">+61% از هفته گذشته</p>
+            <p className="text-gray-500">+61% From Last Week</p>
           </CardFooter>
         </Card>
 
         <Card className="gap-4 rounded-sm">
           <CardHeader>
-            <CardTitle className="text-lg">تیکت‌های بدون پاسخ</CardTitle>
+            <CardTitle className="text-lg">Unanswered Tickets</CardTitle>
             <CardAction className={`${colorMap[color]} text-white py-1.5 px-1.5 rounded-sm`}>
               <ChartNoAxesCombined className="w-6 h-6" />
             </CardAction>
@@ -144,7 +144,7 @@ export default function Page() {
             <p className="text-3xl font-semibold">{calculateUnansweredTickets()}</p>
           </CardContent>
           <CardFooter>
-            <p className="text-gray-500">+17% از سال گذشته</p>
+            <p className="text-gray-500">+17% From Last Year</p>
           </CardFooter>
         </Card>
       </div>

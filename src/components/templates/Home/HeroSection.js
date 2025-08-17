@@ -76,14 +76,14 @@ export default function HeroSection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              id="read-rules-btn" // ← برای تور
+              id="read-rules-btn"
               size="lg"
               className={`${colorMap[color]} text-white shadow-lg hover:shadow-xl transition-all duration-300`}
             >
               <Link href="/rules">Read our rules</Link>
             </Button>
             <Button
-              id="story-btn" // ← برای تور
+              id="story-btn"
               size="lg"
               variant="outline"
               className="border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 bg-white/80 dark:bg-black/80 backdrop-blur-sm hover:bg-white dark:hover:bg-black shadow-lg hover:shadow-xl transition-all duration-300"

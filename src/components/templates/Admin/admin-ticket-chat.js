@@ -146,7 +146,7 @@ export function AdminTicketChat({ ticketSlug }) {
         role: "user",
         content: values.text,
         text: values.text,
-        user_id: sentTicketData.message?.user_id || "admin", // فرض بر این است که API user_id را برمی‌گرداند
+        user_id: sentTicketData.message?.user_id || "admin",
       }
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>

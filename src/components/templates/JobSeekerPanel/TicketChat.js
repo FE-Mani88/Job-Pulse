@@ -43,7 +43,6 @@ import { Formik, Form, Field } from "formik"
 import * as Yup from "yup"
 import { useFetchWithRefresh } from "@/hooks/useFetchWithRefresh"
 
-// تعریف اسکیما با Yup
 const messageSchema = Yup.object().shape({
   text: Yup.string()
     .required("Message is required")

@@ -57,9 +57,6 @@ export function NavUser({ user }) {
         router.push('/')
       })
 
-      // بعد از لاگ‌اوت می‌تونی صفحه رو رفرش کنی یا ریدایرکت بزنی
-      // window.location.href = "/login"
-      // یا هر ریدایرکت دلخواه
     } catch (error) {
       Swal.fire({
         icon: "error",

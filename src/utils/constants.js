@@ -19,10 +19,10 @@ export const textColorMap = {
 }
 
 export const strokeColorMap = {
-    green: "#4ade80",   // معادل bg-green-400
-    blue: "#60a5fa",    // معادل bg-blue-400
-    red: "#f87171",     // معادل bg-red-400
-    purple: "#c084fc"  // معادل bg-purple-400
+    green: "#4ade80",
+    blue: "#60a5fa",
+    red: "#f87171",
+    purple: "#c084fc"
   };
 
   export const glassBgColorMap = {
